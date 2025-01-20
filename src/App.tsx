@@ -6,18 +6,25 @@ import { Home } from './pages/Home';
 import { ProfilePage } from './pages/ProfilePage';
 import { UploadLogoPage } from './pages/UploadLogoPage';
 import { UploadCarPage } from './pages/UploadCarPage';
+import { Layout } from './components/Layout'; 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Auth pages */}
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/upload-logo" element={<UploadLogoPage />} />
-        <Route path="/upload-car" element={<UploadCarPage />} />
+
+        <Route element={<Layout />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/upload-logo" element={<UploadLogoPage />} />
+          <Route path="/upload-car" element={<UploadCarPage />} />
+        </Route>
+
+        {/* Default redirect */}
         <Route path="/" element={<Navigate to="/auth" replace />} />
       </Routes>
     </BrowserRouter>

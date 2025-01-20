@@ -4,8 +4,6 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Car, Plus, AlignJustify } from 'lucide-react';
 import { auth, db } from '../lib/firebase';
 import { Button } from '../components/Button';
-import { Dashboard } from '../components/Dashboard';
-import { DarkModeToggle } from '../components/DarkModeToggle';
 
 interface CarListing {
   id: string;
@@ -19,79 +17,84 @@ export function Home() {
   const navigate = useNavigate();
   const [cars, setCars] = useState<CarListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
+  // useEffect(() => {
+  //   const fetchCars = async () => {
+  //     try {
+  //       const q = query(
+  //         collection(db, 'cars'),
+  //         where('userId', '==', auth.currentUser?.uid)
+  //       );
+
+  //       const querySnapshot = await getDocs(q);
+  //       const carsList = querySnapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       })) as CarListing[];
+
+  //       setCars(carsList);
+  //     } catch (error) {
+  //       console.error('Error fetching cars:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchCars();
+  // }, []);
   useEffect(() => {
-    const fetchCars = async () => {
-      try {
-        const q = query(
-          collection(db, 'cars'),
-          where('userId', '==', auth.currentUser?.uid)
-        );
+    setIsLoading(true);
 
-        const querySnapshot = await getDocs(q);
-        const carsList = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as CarListing[];
+    // Dummy data for testing
+    const dummyCars: CarListing[] = [
+      {
+        id: '1',
+        name: 'Tesla Model S',
+        city: 'New York',
+        price: 79999,
+        imageUrl: 'https://via.placeholder.com/300x200?text=Tesla+Model+S',
+      },
+      {
+        id: '2',
+        name: 'BMW X5',
+        city: 'Los Angeles',
+        price: 64999,
+        imageUrl: 'https://via.placeholder.com/300x200?text=BMW+X5',
+      },
+      {
+        id: '3',
+        name: 'Audi Q7',
+        city: 'Chicago',
+        price: 55999,
+        imageUrl: 'https://via.placeholder.com/300x200?text=Audi+Q7',
+      },
+      {
+        id: '4',
+        name: 'Mercedes-Benz GLC',
+        city: 'San Francisco',
+        price: 49999,
+        imageUrl: 'https://via.placeholder.com/300x200?text=Mercedes+GLC',
+      },
+      {
+        id: '5',
+        name: 'Ford Mustang',
+        city: 'Miami',
+        price: 42999,
+        imageUrl: 'https://via.placeholder.com/300x200?text=Ford+Mustang',
+      },
+    ];
 
-        setCars(carsList);
-      } catch (error) {
-        console.error('Error fetching cars:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCars();
+    // Simulate fetching data with a delay (optional)
+    setTimeout(() => {
+      setCars(dummyCars);
+      setIsLoading(false);
+    }, 1000); // 1-second delay
   }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Overlay */}
-      {isDashboardOpen && (
-        <div
-          className="fixed inset-0 bg-black/30 z-40 transition-opacity"
-          onClick={() => setIsDashboardOpen(false)}
-        />
-      )}
 
-      {/* Dashboard */}
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800  transform transition-transform duration-300 ease-in-out z-50 ${
-          isDashboardOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <Dashboard
-          isOpen={isDashboardOpen}
-          onClose={() => setIsDashboardOpen(false)}
-        />
-      </div>
-
-      {/* Main Content */}
-      <div className="">
-        {/* Header */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <button
-                  onClick={() => setIsDashboardOpen(!isDashboardOpen)}
-                  className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 "
-                  aria-label="Open sidebar"
-                >
-                  <AlignJustify className="h-6 w-6 text-gray-600 dark:text-gray-400" />
-                </button>
-                <h1 className="ml-2 text-xl font-semibold text-gray-900 dark:text-white">
-                  Home Screen
-                </h1>
-              </div>
-              <DarkModeToggle />
-            </div>
-          </div>
-        </header>
-
-        {/* Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
@@ -159,7 +162,7 @@ export function Home() {
             </div>
           ) : null}
         </main>
-      </div>
+
     </div>
   );
 }

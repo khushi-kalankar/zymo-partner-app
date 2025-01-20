@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { User, Save } from 'lucide-react';
 import { RootState } from '../store/store';
@@ -34,7 +34,7 @@ export function ProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 ">
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
