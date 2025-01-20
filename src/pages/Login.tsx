@@ -5,15 +5,21 @@ import { Car } from 'lucide-react';
 import { auth } from '../lib/firebase';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const handleTogglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible); // Toggle password visibility
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,14 +70,29 @@ export function Login() {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
 
-            <Input
-              id="password"
-              label="Password"
-              type="password"
-              required
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
+        <div className="relative">
+              <Input
+                id="password"
+                label="Password"
+                type={isPasswordVisible ? 'text' : 'password'} // Toggle between password and text
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={handleTogglePasswordVisibility}
+                className="absolute right-3 top-10 transform -translate-y-1/2 text-gray-500"
+                aria-label="Toggle password visibility"
+              >
+                {isPasswordVisible ? (
+                  <EyeOff className="h-6 w-6" />
+                ) : (
+                  <Eye className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+
 
             <div className="flex items-center justify-between">
               <div className="text-sm">

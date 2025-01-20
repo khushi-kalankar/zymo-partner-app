@@ -30,7 +30,7 @@ export function Dashboard({ isOpen, onClose }: DashboardProps) {
     {
       icon: Car,
       label: 'Upload Car Details',
-      onClick: () => navigate('/upload-car-detial'),
+      onClick: () => navigate('/upload-car'),
     },
     { icon: LogOut, label: 'Sign Out', onClick: handleLogout },
   ];

@@ -7,6 +7,7 @@ import { auth, db } from '../lib/firebase';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { AccountType } from '../types/auth';
+import { Eye, EyeOff } from 'lucide-react';
 
 const CITIES = [
   'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix',
@@ -73,6 +74,7 @@ export function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     accountType: '' as AccountType,
     username: '',
