@@ -1,0 +1,27 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthPage } from './pages/AuthPage';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { Home } from './pages/Home';
+import { ProfilePage } from './pages/ProfilePage';
+import { UploadLogoPage } from './pages/UploadLogoPage';
+import { UploadCarPage } from './pages/UploadCarPage';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/upload-logo" element={<UploadLogoPage />} />
+        <Route path="/upload-car" element={<UploadCarPage />} />
+        <Route path="/" element={<Navigate to="/auth" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;

@@ -1,0 +1,713 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useDropzone } from 'react-dropzone';
+import { Car as CarIcon, Upload, Plus, X } from 'lucide-react';
+import { addCar } from '../store/slices/carSlice';
+import { Button } from '../components/Button';
+import { Input } from '../components/Input';
+
+const FUEL_TYPES = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
+const CAR_TYPES = ['Sedan', 'SUV', 'Hatchback', 'MPV', 'Luxury'];
+const TRANSMISSION_TYPES = ['Manual', 'Automatic'];
+const CITIES = [
+  'New York',
+  'Los Angeles',
+  'Chicago',
+  'Houston',
+  'Phoenix',
+  'Philadelphia',
+  'San Antonio',
+  'San Diego',
+  'Dallas',
+  'San Jose',
+];
+
+interface Package {
+  type: 'Unlimited' | 'Limited';
+  price: number;
+}
+
+export function UploadCarPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    name: '',
+    cities: [] as string[],
+    pickupLocation: '',
+    securityDeposit: 0,
+    yearOfRegistration: new Date().getFullYear(),
+    fuelType: FUEL_TYPES[0],
+    carType: CAR_TYPES[0],
+    transmissionType: TRANSMISSION_TYPES[0],
+    minBookingDuration: 1,
+    kmRate: 0,
+    extraHourRate: 0,
+    packages: [] as Package[],
+    monthlyRental: {
+      available: false,
+      rate: 0,
+      limit: 'Unlimited' as const,
+      limitValue: 0,
+    },
+    deliveryCharges: {
+      enabled: false,
+      charges: {
+        '0-10': 0,
+        '10-25': 0,
+        '25-50': 0,
+      },
+    },
+  });
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
+    },
+    onDrop: (acceptedFiles) => {
+      const newFiles = acceptedFiles.slice(0, 5 - imageFiles.length);
+      setImageFiles([...imageFiles, ...newFiles]);
+
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setImagePreviews([...imagePreviews, ...newPreviews]);
+    },
+    maxFiles: 5,
+  });
+
+  const removeImage = (index: number) => {
+    const newFiles = [...imageFiles];
+    const newPreviews = [...imagePreviews];
+
+    URL.revokeObjectURL(newPreviews[index]);
+    newFiles.splice(index, 1);
+    newPreviews.splice(index, 1);
+
+    setImageFiles(newFiles);
+    setImagePreviews(newPreviews);
+  };
+
+  const addPackage = () => {
+    setFormData({
+      ...formData,
+      packages: [...formData.packages, { type: 'Limited', price: 0 }],
+    });
+  };
+
+  const removePackage = (index: number) => {
+    const newPackages = [...formData.packages];
+    newPackages.splice(index, 1);
+    setFormData({ ...formData, packages: newPackages });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (imageFiles.length === 0) {
+      setError('Please upload at least one image');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await dispatch(addCar({ car: formData, imageFiles }));
+      navigate('/home');
+    } catch (err) {
+      setError('Failed to upload car details');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // To control dropdown visibility
+  const [searchTerm, setSearchTerm] = useState(''); // To filter cities
+
+  const dropdownRef = useRef<HTMLDivElement>(null); // Reference for dropdown
+  const inputRef = useRef<HTMLInputElement>(null); // Reference for input
+
+  const handleCheckboxChange = (city: string) => {
+    const newCities = formData.cities.includes(city)
+      ? formData.cities.filter((c) => c !== city)
+      : [...formData.cities, city];
+    setFormData({ ...formData, cities: newCities });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredCities = CITIES.filter((city) =>
+    city.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Close dropdown if the user clicks outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="flex items-center space-x-4 mb-8">
+          <div className="bg-yellow-100 p-3 rounded-full">
+            <CarIcon className="h-6 w-6 text-yellow-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Upload Car Details
+          </h1>
+        </div>
+
+        {error && (
+          <div className="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <Input
+              label="Car Name"
+              required
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+
+            {/* Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Car Images (Max 5)
+              </label>
+              <div
+                {...getRootProps()}
+                className={`
+                  border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
+                  ${
+                    imageFiles.length >= 5
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:border-yellow-400'
+                  }
+                `}
+              >
+                <input {...getInputProps()} disabled={imageFiles.length >= 5} />
+                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                <p className="mt-2 text-sm text-gray-600">
+                  Drag and drop images here, or click to select files
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Supports: JPG, PNG, GIF (Max size: 5MB each)
+                </p>
+              </div>
+
+              {imagePreviews.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={preview} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Cities */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cities Available
+              </label>
+
+              {/* Input Box with Dropdown */}
+              <div className="relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={formData.cities.join(', ')} // Display selected cities as a comma-separated string
+                  readOnly
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown on click
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  placeholder="Select cities..."
+                />
+
+                {/* Dropdown */}
+                {isDropdownOpen && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute left-0 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto z-10"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Search cities..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="w-full p-2 border-b border-gray-300"
+                    />
+                    <div className="max-h-48 overflow-y-auto">
+                      {filteredCities.map((city) => (
+                        <div
+                          key={city}
+                          className="flex items-center space-x-2 p-2 hover:bg-yellow-100 cursor-pointer"
+                          onClick={() => handleCheckboxChange(city)} // Toggle checkbox when clicking the city
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.cities.includes(city)}
+                            onChange={() => handleCheckboxChange(city)}
+                            className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                          />
+                          <span className="text-sm text-gray-700">{city}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Display Selected Cities Below the Input */}
+              <div className="mt-4">
+                {formData.cities.map((city) => (
+                  <span
+                    key={city}
+                    className="inline-flex items-center px-2 py-1 text-xs bg-yellow-200 rounded-full mr-2 mb-2"
+                  >
+                    {city}
+                    <button
+                      type="button"
+                      onClick={() => handleCheckboxChange(city)} // Deselect the city
+                      className="ml-1 text-sm text-red-600"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <Input
+              label="Pickup Location"
+              required
+              value={formData.pickupLocation}
+              onChange={(e) =>
+                setFormData({ ...formData, pickupLocation: e.target.value })
+              }
+            />
+
+            <Input
+              label="Security Deposit"
+              type="number"
+              required
+              value={formData.securityDeposit}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  securityDeposit: Number(e.target.value),
+                })
+              }
+            />
+
+            {/* Car Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Year of Registration
+                </label>
+                <select
+                  value={formData.yearOfRegistration}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      yearOfRegistration: Number(e.target.value),
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                >
+                  {Array.from(
+                    { length: 20 },
+                    (_, i) => new Date().getFullYear() - i
+                  ).map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fuel Type
+                </label>
+                <select
+                  value={formData.fuelType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fuelType: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                >
+                  {FUEL_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Car Type
+                </label>
+                <select
+                  value={formData.carType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, carType: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                >
+                  {CAR_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Transmission Type
+                </label>
+                <select
+                  value={formData.transmissionType}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      transmissionType: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                >
+                  {TRANSMISSION_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Rates */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                label="Minimum Booking Duration (days)"
+                type="number"
+                min="1"
+                required
+                value={formData.minBookingDuration}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    minBookingDuration: Number(e.target.value),
+                  })
+                }
+              />
+
+              <Input
+                label="KM Rate"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+                value={formData.kmRate}
+                onChange={(e) =>
+                  setFormData({ ...formData, kmRate: Number(e.target.value) })
+                }
+              />
+
+              <Input
+                label="Extra Hour Rate"
+                type="number"
+                min="0"
+                step="0.01"
+                required
+                value={formData.extraHourRate}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    extraHourRate: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+
+            {/* Packages */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-gray-700">
+                  Package Details
+                </label>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={addPackage}
+                  className="flex items-center space-x-1"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Add Package</span>
+                </Button>
+              </div>
+
+              {formData.packages.map((pkg, index) => (
+                <div key={index} className="flex items-center space-x-4">
+                  <select
+                    value={pkg.type}
+                    onChange={(e) => {
+                      const newPackages = [...formData.packages];
+                      newPackages[index].type = e.target.value as
+                        | 'Unlimited'
+                        | 'Limited';
+                      setFormData({ ...formData, packages: newPackages });
+                    }}
+                    className="block w-40 rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  >
+                    <option value="Limited">Limited</option>
+                    <option value="Unlimited">Unlimited</option>
+                  </select>
+
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={pkg.price}
+                    onChange={(e) => {
+                      const newPackages = [...formData.packages];
+                      newPackages[index].price = Number(e.target.value);
+                      setFormData({ ...formData, packages: newPackages });
+                    }}
+                    className="flex-1"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removePackage(index)}
+                    className="p-2 text-red-500 hover:text-red-700"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Monthly Rental */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.monthlyRental.available}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      monthlyRental: {
+                        ...formData.monthlyRental,
+                        available: e.target.checked,
+                      },
+                    })
+                  }
+                  className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                />
+                <label className="text-sm font-medium text-gray-700">
+                  Monthly Rental Available
+                </label>
+              </div>
+
+              {formData.monthlyRental.available && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
+                  <Input
+                    label="Monthly Rate"
+                    type="number"
+                    min="0"
+                    required
+                    value={formData.monthlyRental.rate}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        monthlyRental: {
+                          ...formData.monthlyRental,
+                          rate: Number(e.target.value),
+                        },
+                      })
+                    }
+                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Limit Type
+                    </label>
+                    <select
+                      value={formData.monthlyRental.limit}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          monthlyRental: {
+                            ...formData.monthlyRental,
+                            limit: e.target.value as 'Unlimited' | 'Limited',
+                          },
+                        })
+                      }
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                    >
+                      <option value="Unlimited">Unlimited</option>
+                      <option value="Limited">Limited</option>
+                    </select>
+                  </div>
+
+                  {formData.monthlyRental.limit === 'Limited' && (
+                    <Input
+                      label="Limit Value (KM)"
+                      type="number"
+                      min="0"
+                      required
+                      value={formData.monthlyRental.limitValue}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          monthlyRental: {
+                            ...formData.monthlyRental,
+                            limitValue: Number(e.target.value),
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Delivery Charges */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={formData.deliveryCharges.enabled}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      deliveryCharges: {
+                        ...formData.deliveryCharges,
+                        enabled: e.target.checked,
+                      },
+                    })
+                  }
+                  className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                />
+                <label className="text-sm font-medium text-gray-700">
+                  Home Delivery/Pickup Available
+                </label>
+              </div>
+
+              {formData.deliveryCharges.enabled && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
+                  <Input
+                    label="0-10 km"
+                    type="number"
+                    min="0"
+                    required
+                    value={formData.deliveryCharges.charges['0-10']}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        deliveryCharges: {
+                          ...formData.deliveryCharges,
+                          charges: {
+                            ...formData.deliveryCharges.charges,
+                            '0-10': Number(e.target.value),
+                          },
+                        },
+                      })
+                    }
+                  />
+
+                  <Input
+                    label="10-25 km"
+                    type="number"
+                    min="0"
+                    required
+                    value={formData.deliveryCharges.charges['10-25']}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        deliveryCharges: {
+                          ...formData.deliveryCharges,
+                          charges: {
+                            ...formData.deliveryCharges.charges,
+                            '10-25': Number(e.target.value),
+                          },
+                        },
+                      })
+                    }
+                  />
+
+                  <Input
+                    label="25-50 km"
+                    type="number"
+                    min="0"
+                    required
+                    value={formData.deliveryCharges.charges['25-50']}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        deliveryCharges: {
+                          ...formData.deliveryCharges,
+                          charges: {
+                            ...formData.deliveryCharges.charges,
+                            '25-50': Number(e.target.value),
+                          },
+                        },
+                      })
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate('/home')}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" isLoading={isSubmitting}>
+              Upload Car
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
