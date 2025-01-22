@@ -7,6 +7,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { UploadLogoPage } from './pages/UploadLogoPage';
 import { UploadCarPage } from './pages/UploadCarPage';
 import { Layout } from './components/Layout'; 
+import Public from './pages/Public';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/upload-logo" element={<UploadLogoPage />} />
           <Route path="/upload-car" element={<UploadCarPage />} />
+          <Route path="/public" element={<Public />} />
         </Route>
 
         {/* Default redirect */}
