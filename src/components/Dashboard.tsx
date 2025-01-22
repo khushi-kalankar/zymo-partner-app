@@ -54,9 +54,9 @@ export function Dashboard({ isOpen, onClose }: DashboardProps) {
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
             <div className="flex items-center space-x-2">
-              <Car className="h-6 w-6 text-yellow-400" />
-              <span className="text-lg font-semibold dark:text-white">
-                CarRental
+              <Car className="h-6 w-6 text-darklime dark:text-lime" />
+              <span className="text-lg font-bold font-quicksand text-[#94C748] dark:text-lime">
+                Zymo Partner
               </span>
             </div>
             <button

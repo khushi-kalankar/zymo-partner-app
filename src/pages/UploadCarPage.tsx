@@ -35,6 +35,8 @@ export function UploadCarPage() {
   const [error, setError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [showForm, setShowForm] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     cities: [] as string[],
@@ -155,19 +157,24 @@ export function UploadCarPage() {
         setIsDropdownOpen(false);
       }
     };
-
+    setTimeout(() => {
+      setShowForm(true);
+    }, 200); // Delay of 500ms before showing the form
+  
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className='bg-lime rounded-2xl dark:bg-transparent'>
+       <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className={`dark:bg-gray-900 bg-white rounded-3xl shadow-lg p-6 border border-lime transition-all duration-1000 ease-in-out
+            ${showForm ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"}`}>
         <div className="flex items-center space-x-4 mb-8">
-          <div className="bg-yellow-100 p-3 rounded-full">
-            <CarIcon className="h-6 w-6 text-yellow-600" />
+          <div className="bg-lime/40 dark:bg-lime p-3 rounded-full">
+            <CarIcon className="h-6 w-6 text-darklime/90" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-darklime dark:text-lime">
             Upload Car Details
           </h1>
         </div>
@@ -190,27 +197,27 @@ export function UploadCarPage() {
             />
 
             {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className='py-2'>
+              <label className="block text-sm text-gray-700 mx-1 font-medium dark:text-white mb-3">
                 Car Images (Max 5)
               </label>
               <div
                 {...getRootProps()}
                 className={`
-                  border-2 border-dashed rounded-lg p-6 text-center cursor-pointer
+                  border-2 border-gray-300 border-dashed rounded-2xl p-6 text-center cursor-pointer
                   ${
                     imageFiles.length >= 5
                       ? 'opacity-50 cursor-not-allowed'
-                      : 'hover:border-yellow-400'
+                      : 'hover:border-darklime dark:hover:border-lime'
                   }
                 `}
               >
                 <input {...getInputProps()} disabled={imageFiles.length >= 5} />
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-sm text-gray-600">
+                <p className="mt-2 text-sm dark:text-gray-300">
                   Drag and drop images here, or click to select files
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs dark:text-gray-300 mt-1">
                   Supports: JPG, PNG, GIF (Max size: 5MB each)
                 </p>
               </div>
@@ -238,8 +245,8 @@ export function UploadCarPage() {
             </div>
 
             {/* Cities */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className=''>
+              <label className="block text-sm px-1 font-medium text-gray-700 dark:text-white mb-3">
                 Cities Available
               </label>
 
@@ -251,7 +258,7 @@ export function UploadCarPage() {
                   value={formData.cities.join(', ')} // Display selected cities as a comma-separated string
                   readOnly
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown on click
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 dark:text-white pl-3 block w-full border border-gray-500 rounded-2xl p-2 dark:bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
                   placeholder="Select cities..."
                 />
 
@@ -259,7 +266,7 @@ export function UploadCarPage() {
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute left-0 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto z-10"
+                    className="absolute left-0 w-full mt-1 bg-white 00 border rounded-2xl shadow-lg max-h-60 overflow-y-auto z-10"
                   >
                     <input
                       type="text"
@@ -272,16 +279,16 @@ export function UploadCarPage() {
                       {filteredCities.map((city) => (
                         <div
                           key={city}
-                          className="flex items-center space-x-2 p-2 hover:bg-yellow-100 cursor-pointer"
+                          className="flex items-center space-x-2 p-2 hover:bg-lime cursor-pointer"
                           onClick={() => handleCheckboxChange(city)} // Toggle checkbox when clicking the city
                         >
                           <input
                             type="checkbox"
                             checked={formData.cities.includes(city)}
                             onChange={() => handleCheckboxChange(city)}
-                            className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                            className="rounded border-gray-300 text-darklime focus:ring-lime"
                           />
-                          <span className="text-sm text-gray-700">{city}</span>
+                          <span className="text-sm text-gray-700 ">{city}</span>
                         </div>
                       ))}
                     </div>
@@ -294,7 +301,7 @@ export function UploadCarPage() {
                 {formData.cities.map((city) => (
                   <span
                     key={city}
-                    className="inline-flex items-center px-2 py-1 text-xs bg-yellow-200 rounded-full mr-2 mb-2"
+                    className="inline-flex items-center px-2 py-1 text-xs bg-lime rounded-full mr-2 mb-2"
                   >
                     {city}
                     <button
@@ -334,18 +341,21 @@ export function UploadCarPage() {
             {/* Car Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="mx-1 block text-sm font-medium text-gray-700 dark:text-white mb-3">
                   Year of Registration
                 </label>
                 <select
                   value={formData.yearOfRegistration}
+                  style={{
+                    colorScheme:''
+                  }}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       yearOfRegistration: Number(e.target.value),
                     })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full rounded-2xl border border-gray-800 p-2 dark:bg-gray-800 dark:text-white border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 >
                   {Array.from(
                     { length: 20 },
@@ -359,7 +369,7 @@ export function UploadCarPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="mx-1 block text-sm dark:text-white font-medium text-gray-700 mb-3">
                   Fuel Type
                 </label>
                 <select
@@ -367,10 +377,10 @@ export function UploadCarPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, fuelType: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full rounded-2xl p-2 dark:text-white dark:bg-gray-800 border border-gray-800 shadow-sm "
                 >
                   {FUEL_TYPES.map((type) => (
-                    <option key={type} value={type}>
+                    <option key={type} value={type} className='rounded-2xl'>
                       {type}
                     </option>
                   ))}
@@ -378,7 +388,7 @@ export function UploadCarPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mx-1 dark:text-white text-sm font-medium text-gray-700 mb-3">
                   Car Type
                 </label>
                 <select
@@ -386,7 +396,7 @@ export function UploadCarPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, carType: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 >
                   {CAR_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -397,7 +407,7 @@ export function UploadCarPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block mx-1 text-sm font-medium text-gray-700 mb-3 dark:text-white">
                   Transmission Type
                 </label>
                 <select
@@ -408,7 +418,7 @@ export function UploadCarPage() {
                       transmissionType: e.target.value,
                     })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white shadow-sm "
                 >
                   {TRANSMISSION_TYPES.map((type) => (
                     <option key={type} value={type}>
@@ -466,14 +476,14 @@ export function UploadCarPage() {
             {/* Packages */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-white">
                   Package Details
                 </label>
                 <Button
                   type="button"
                   variant="secondary"
                   onClick={addPackage}
-                  className="flex items-center space-x-1"
+                  className="flex bg-lime hover:bg-lime/70 items-center space-x-1"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Add Package</span>
@@ -491,13 +501,14 @@ export function UploadCarPage() {
                         | 'Limited';
                       setFormData({ ...formData, packages: newPackages });
                     }}
-                    className="block w-40 rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                    className="block w-40 rounded-2xl p-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm border"
                   >
                     <option value="Limited">Limited</option>
                     <option value="Unlimited">Unlimited</option>
                   </select>
 
                   <Input
+                    label=''
                     type="number"
                     min="0"
                     step="0.01"
@@ -538,7 +549,7 @@ export function UploadCarPage() {
                   }
                   className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
                 />
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium dark:text-white text-gray-700">
                   Monthly Rental Available
                 </label>
               </div>
@@ -563,7 +574,7 @@ export function UploadCarPage() {
                   />
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mx-1 block text-sm font-medium dark:text-white text-gray-700 mb-2">
                       Limit Type
                     </label>
                     <select
@@ -577,7 +588,7 @@ export function UploadCarPage() {
                           },
                         })
                       }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                      className="mt-1 block p-2 border border-gray-700 dark:bg-gray-800 dark:text-white w-full rounded-2xl shadow-sm "
                     >
                       <option value="Unlimited">Unlimited</option>
                       <option value="Limited">Limited</option>
@@ -621,9 +632,9 @@ export function UploadCarPage() {
                       },
                     })
                   }
-                  className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                  className="rounded border-gray-300 "
                 />
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium dark:text-white text-gray-700">
                   Home Delivery/Pickup Available
                 </label>
               </div>
@@ -694,20 +705,23 @@ export function UploadCarPage() {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-center space-x-4">
             <Button
               type="button"
               variant="secondary"
+              className='hover:bg-gray-300 w-full'
               onClick={() => navigate('/home')}
             >
               Cancel
             </Button>
-            <Button type="submit" isLoading={isSubmitting}>
+            <Button type="submit" className='w-full bg-lime text-black dark:text-black hover:bg-lime/70' isLoading={isSubmitting}>
               Upload Car
             </Button>
           </div>
         </form>
       </div>
     </div>
+    </div>
+   
   );
 }

@@ -47,13 +47,16 @@ export function UploadLogoPage() {
   });
 
   return (
+    <div className='bg-lime dark:bg-transparent h-screen rounded-xl'>
+
+    
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white dark:bg-gray-900 border border-lime rounded-3xl shadow-lg p-6">
         <div className="flex items-center space-x-4 mb-8">
-          <div className="bg-yellow-100 p-3 rounded-full">
-            <ImageIcon className="h-6 w-6 text-yellow-600" />
+          <div className="bg-lime p-3 rounded-full">
+            <ImageIcon className="h-6 w-6 text-darklime" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Upload Logo</h1>
+          <h1 className="text-2xl font-bold text-darklime dark:text-lime">Upload Logo</h1>
         </div>
 
         {error && (
@@ -65,9 +68,9 @@ export function UploadLogoPage() {
         <div
           {...getRootProps()}
           className={`
-            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
+            border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer
             transition-colors duration-200
-            ${isDragActive ? 'border-yellow-400 bg-yellow-50' : 'border-gray-300 hover:border-yellow-400'}
+            ${isDragActive ? ' bg-yellow-50' : 'border-gray-300 hover:border-lime dark:hover:border-darklime'}
           `}
         >
           <input {...getInputProps()} />
@@ -99,6 +102,7 @@ export function UploadLogoPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
