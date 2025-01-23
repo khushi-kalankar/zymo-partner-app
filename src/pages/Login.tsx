@@ -37,23 +37,23 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="bg-yellow-400 p-3 rounded-full">
-            <Car className="h-12 w-12 text-white" />
+          <div className="bg-lime p-3 rounded-full">
+            <Car className="h-12 w-12 text-gray-800" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-lime">
           Welcome back
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-white">
           Sign in to access your account
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-xl shadow-yellow-100/50 sm:rounded-lg sm:px-10">
+      <div className="mt-8 max-w-md w-full">
+        <div className="bg-gray-900 py-8 px-4 rounded-2xl border border-lime text-white">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -96,18 +96,18 @@ export function Login() {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium text-yellow-600 hover:text-yellow-500">
+                <Link to="/forgot-password" className="font-medium p-2 text-lime hover:text-lime/80">
                   Forgot your password?
                 </Link>
               </div>
             </div>
-
-            <Button type="submit" fullWidth isLoading={isLoading}>
+             <div className='flex justify-center'>   
+            <Button type="submit" className='items-center hover:bg-lime/80 text-black w-[240px] bg-lime' fullWidth isLoading={isLoading}>
               Sign in
             </Button>
-
+            </div>
             <div className="text-sm text-center">
-              <Link to="/signup" className="font-medium text-yellow-600 hover:text-yellow-500">
+              <Link to="/signup" className="font-medium text-white underline hover:text-lime">
                 Don't have an account? Sign up
               </Link>
             </div>

@@ -140,7 +140,7 @@ export function Home() {
                       </span>
                       <Button
                         variant="secondary"
-                        className=' rounded-full hover:shadow-xl dark:bg-gray-800 dark:text-white'
+                        className='sm:ml-3 rounded-full hover:shadow-xl bg-white dark:bg-gray-800 dark:text-white'
                         onClick={() => navigate(`/cars/${car.id}`)}
                       >
                         View Details

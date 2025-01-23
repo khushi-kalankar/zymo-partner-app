@@ -7,7 +7,6 @@ import { auth, db } from '../lib/firebase';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { AccountType } from '../types/auth';
-import { Eye, EyeOff } from 'lucide-react';
 
 const CITIES = [
   'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix',
@@ -35,7 +34,7 @@ function Step({ isActive, isCompleted, title, stepNumber, totalSteps, children }
             ${isCompleted 
               ? 'bg-green-500 border-green-500 text-white' 
               : isActive 
-                ? 'bg-yellow-400 border-yellow-400 text-white shadow-lg shadow-yellow-200'
+                ? 'bg-lime-400 border-lime-400 text-white shadow-lg shadow-lime-200'
                 : 'bg-white border-gray-300 text-gray-500'
             }
           `}>
@@ -51,12 +50,12 @@ function Step({ isActive, isCompleted, title, stepNumber, totalSteps, children }
         <div className="ml-4 flex-1">
           <h3 className={`
             text-lg font-medium transition-colors duration-300
-            ${isActive ? 'text-gray-900' : 'text-gray-500'}
+            ${isActive ? 'text-white' : 'text-gray-400'}
           `}>
             {title}
           </h3>
           {isActive && children && (
-            <div className="mt-6 bg-white rounded-xl p-6 shadow-lg border border-gray-100 transition-all duration-300 ease-in-out transform hover:shadow-xl">
+            <div className="mt-6 bg-white/60 rounded-xl p-6 shadow-lg border border-lime transition-all duration-300 ease-in-out transform hover:shadow-xl">
               {children}
             </div>
           )}
@@ -69,12 +68,12 @@ function Step({ isActive, isCompleted, title, stepNumber, totalSteps, children }
   );
 }
 
+
 export function Signup() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     accountType: '' as AccountType,
     username: '',
@@ -101,10 +100,10 @@ export function Signup() {
                 key={type}
                 type="button"
                 className={`
-                  px-4 py-3 border rounded-lg text-sm font-medium
+                  px-4 py-3 border rounded-lg text-lime font-medium  hover:border-lime hover:bg-lime hover:text-white
                   ${formData.accountType === type
-                    ? 'border-yellow-400 bg-yellow-50 text-yellow-700'
-                    : 'border-gray-200 text-gray-500 hover:border-yellow-400 hover:bg-yellow-50'
+                    ? 'border-lime-400 bg-lime text-white'
+                    : 'border-gray-200'
                   }
                 `}
                 onClick={() => setFormData({ ...formData, accountType: type as AccountType })}
@@ -333,21 +332,21 @@ export function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-xl mb-6 transform hover:scale-105 transition-transform duration-300">
-            <Car className="h-10 w-10 text-white" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-lime shadow-xl mb-6 transform hover:scale-105 transition-transform duration-300">
+            <Car className="h-10 w-10 " />
           </div>
-          <h2 className="text-4xl font-extrabold text-gray-900 mb-2">
+          <h2 className="text-4xl font-extrabold text-lime mb-2">
             Create your account
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-white">
             Complete the following steps to get started
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
+        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
             {error && (
               <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
@@ -385,15 +384,16 @@ export function Signup() {
                   type="button"
                   variant="secondary"
                   onClick={() => setCurrentStep(currentStep - 1)}
-                  className="px-6"
+                  className="px-6 bg-white "
                 >
                   Back
                 </Button>
               )}
               <Button
                 type="submit"
-                className={`px-6 ${currentStep === 1 ? 'ml-auto' : ''}`}
                 isLoading={isLoading}
+                className={`px-6 bg-lime ${currentStep === 1 ? 'ml-auto' : ''}`}
+
               >
                 {currentStep === steps.length ? 'Create Account' : 'Next'}
               </Button>
