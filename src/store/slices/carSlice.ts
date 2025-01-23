@@ -56,45 +56,60 @@ const initialState: CarState = {
   error: null,
 };
 
-export const addCar = createAsyncThunk(
+const uploadImages = async (files: File[]): Promise<string[]> => {
+  if (!auth.currentUser) throw new Error('No authenticated user');
+
+  return Promise.all(
+    files.map(async (file) => {
+      const storageRef = ref(
+        storage,
+        `cars/${auth.currentUser!.uid}/${Date.now()}_${file.name}`
+      );
+      const snapshot = await uploadBytes(storageRef, file);
+      return getDownloadURL(snapshot.ref);
+    })
+  );
+};
+
+export const addCar = createAsyncThunk<Car, { car: Omit<Car, 'userId'>; imageFiles: File[] }>(
   'car/addCar',
-  async (carData: { car: Omit<Car, 'userId'>, imageFiles: File[] }) => {
-    if (!auth.currentUser) throw new Error('No authenticated user');
+  async (carData) => {
+    try {
+      const imageUrls = await uploadImages(carData.imageFiles);
 
-    const imageUrls = await Promise.all(
-      carData.imageFiles.map(async (file) => {
-        const storageRef = ref(storage, `cars/${auth.currentUser!.uid}/${Date.now()}_${file.name}`);
-        const snapshot = await uploadBytes(storageRef, file);
-        return getDownloadURL(snapshot.ref);
-      })
-    );
+      const car: Car = {
+        ...carData.car,
+        images: imageUrls,
+        userId: auth.currentUser!.uid,
+      };
 
-    const car: Car = {
-      ...carData.car,
-      images: imageUrls,
-      userId: auth.currentUser.uid,
-    };
-
-    const docRef = await addDoc(collection(db, 'cars'), car);
-    return { ...car, id: docRef.id };
+      const docRef = await addDoc(collection(db, 'cars'), car);
+      return { ...car, id: docRef.id };
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Failed to add car');
+    }
   }
 );
 
-export const fetchUserCars = createAsyncThunk(
+export const fetchUserCars = createAsyncThunk<Car[], void>(
   'car/fetchUserCars',
   async () => {
-    if (!auth.currentUser) throw new Error('No authenticated user');
+    try {
+      if (!auth.currentUser) throw new Error('No authenticated user');
 
-    const q = query(
-      collection(db, 'cars'),
-      where('userId', '==', auth.currentUser.uid)
-    );
+      const q = query(
+        collection(db, 'cars'),
+        where('userId', '==', auth.currentUser.uid)
+      );
 
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Car[];
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Car[];
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Failed to fetch cars');
+    }
   }
 );
 

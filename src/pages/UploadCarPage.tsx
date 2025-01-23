@@ -6,21 +6,31 @@ import { Car as CarIcon, Upload, Plus, X } from 'lucide-react';
 import { addCar } from '../store/slices/carSlice';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-
+import { AppDispatch } from '../store/store';
 const FUEL_TYPES = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
 const CAR_TYPES = ['Sedan', 'SUV', 'Hatchback', 'MPV', 'Luxury'];
 const TRANSMISSION_TYPES = ['Manual', 'Automatic'];
 const CITIES = [
-  'New York',
-  'Los Angeles',
-  'Chicago',
-  'Houston',
-  'Phoenix',
-  'Philadelphia',
-  'San Antonio',
-  'San Diego',
-  'Dallas',
-  'San Jose',
+ "Bangalore",
+    "Hyderabad",
+    "Mumbai",
+    "Delhi-NCR",
+    "Chennai",
+    "Pune",
+    "Mangalore",
+    "Dombivili",
+    "Palava",
+    "Thane",
+    "Amritsar",
+    "Kolkata",
+    "Ahmedabad",
+    "Bhubaneswar",
+    "Chandigarh",
+    "Coimbatore",
+    "Jaipur",
+    "Kochi",
+    "Nashik",
+    "Madurai"
 ];
 
 interface Package {
@@ -30,7 +40,7 @@ interface Package {
 
 export function UploadCarPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -53,7 +63,7 @@ export function UploadCarPage() {
     monthlyRental: {
       available: false,
       rate: 0,
-      limit: 'Unlimited' as const,
+      limit: 'Unlimited' as 'Unlimited' | 'Limited',
       limitValue: 0,
     },
     deliveryCharges: {
@@ -108,22 +118,29 @@ export function UploadCarPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (imageFiles.length === 0) {
-      setError('Please upload at least one image');
+      setError("Please upload at least one image");
       return;
     }
-
+  
     setIsSubmitting(true);
     setError(null);
-
+  
     try {
-      await dispatch(addCar({ car: formData, imageFiles }));
-      navigate('/home');
+      const imageUrls = imageFiles.map((file) => URL.createObjectURL(file)); // Generate URLs
+      await dispatch(
+        addCar({
+          car: { ...formData, images: imageUrls }, // Include images
+          imageFiles,
+        })
+      );
+      navigate("/home");
     } catch (err) {
-      setError('Failed to upload car details');
+      setError("Failed to upload car details");
     } finally {
       setIsSubmitting(false);
     }
   };
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // To control dropdown visibility
   const [searchTerm, setSearchTerm] = useState(''); // To filter cities
 
@@ -355,7 +372,7 @@ export function UploadCarPage() {
                       yearOfRegistration: Number(e.target.value),
                     })
                   }
-                  className="mt-1 block w-full rounded-2xl border border-gray-800 p-2 dark:bg-gray-800 dark:text-white border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full rounded-2xl border border-gray-800 p-2 dark:bg-gray-800 dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 >
                   {Array.from(
                     { length: 20 },
@@ -396,7 +413,7 @@ export function UploadCarPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, carType: e.target.value })
                   }
-                  className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                  className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                 >
                   {CAR_TYPES.map((type) => (
                     <option key={type} value={type}>
