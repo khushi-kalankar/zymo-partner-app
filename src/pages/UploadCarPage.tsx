@@ -283,14 +283,14 @@ export function UploadCarPage() {
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute left-0 w-full mt-1 bg-white 00 border rounded-2xl shadow-lg max-h-60 overflow-y-auto z-10"
+                    className="absolute left-0 w-full mt-1 bg-white 00 border border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto dark:bg-gray-800 z-10"
                   >
                     <input
                       type="text"
                       placeholder="Search cities..."
                       value={searchTerm}
                       onChange={handleSearchChange}
-                      className="w-full p-2 border-b border-gray-300"
+                      className="w-full p-2 border-b border-b-lime border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-lime "
                     />
                     <div className="max-h-48 overflow-y-auto">
                       {filteredCities.map((city) => (
@@ -305,7 +305,7 @@ export function UploadCarPage() {
                             onChange={() => handleCheckboxChange(city)}
                             className="rounded border-gray-300 text-darklime focus:ring-lime"
                           />
-                          <span className="text-sm text-gray-700 ">{city}</span>
+                          <span className="text-sm text-gray-300 ">{city}</span>
                         </div>
                       ))}
                     </div>

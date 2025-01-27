@@ -9,9 +9,9 @@ import { Button } from '../components/Button';
 import { AccountType } from '../types/auth';
 
 const CITIES = [
-  'New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix',
-  'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose',
+  'Delhi', 'Mumbai', 'Chennai', 'Pune', 'Hyderabad', 'Kolkata', 'Jaipur', 'Noida', 'Bangalore', 'Amritsar'
 ];
+
 
 const CARS_RANGES = ['0-5', '5-10', '10-20', '20-50', '50-100', '100+'];
 
@@ -76,11 +76,10 @@ export function Signup() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     accountType: '' as AccountType,
-    username: '',
+    email: '',
     password: '',
     confirmPassword: '',
     fullName: '',
-    email: '',
     phone: '',
     cities: [] as string[],
     carsRange: '',
@@ -88,6 +87,20 @@ export function Signup() {
     ifscCode: '',
     upiId: '',
   });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const filteredCities = CITIES.filter((city) =>
+    city.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  const handleCitySelect = (city:string) => {
+    if (!formData.cities.includes(city)) {
+      setFormData({ ...formData, cities: [...formData.cities, city] });
+    }
+    setSearchTerm(city);
+    setShowDropdown(false);
+  };
+  
 
   const steps = [
     {
@@ -100,9 +113,9 @@ export function Signup() {
                 key={type}
                 type="button"
                 className={`
-                  px-4 py-3 border rounded-lg text-lime font-medium  hover:border-lime hover:bg-lime hover:text-white
+                  px-4 py-3 border rounded-lg font-medium  hover:border-lime hover:bg-lime
                   ${formData.accountType === type
-                    ? 'border-lime-400 bg-lime text-white'
+                    ? 'bg-lime text-black'
                     : 'border-gray-200'
                   }
                 `}
@@ -120,15 +133,16 @@ export function Signup() {
       content: (
         <div className="space-y-4">
           <Input
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
+            type='email'
             required
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
           <Input
             id="password"
-            label="Password"
+            label="Set Password"
             type="password"
             required
             value={formData.password}
@@ -178,27 +192,32 @@ export function Signup() {
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Cities Available
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {CITIES.map((city) => (
-                <label key={city} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.cities.includes(city)}
-                    onChange={(e) => {
-                      const newCities = e.target.checked
-                        ? [...formData.cities, city]
-                        : formData.cities.filter((c) => c !== city);
-                      setFormData({ ...formData, cities: newCities });
-                    }}
-                    className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
-                  />
-                  <span className="text-sm text-gray-700">{city}</span>
-                </label>
-              ))}
-            </div>
+            <Input 
+            label='Cities Available'
+              type='text'
+              value={searchTerm}
+              onChange={(e)=> { 
+                setSearchTerm(e.target.value); 
+                setShowDropdown(true);
+              }}
+            />
+            {showDropdown && searchTerm && (
+        <ul className="border border-gray-500 rounded-2xl shadow-md">
+          {filteredCities.length > 0 ? (
+            filteredCities.map((city) => (
+              <li
+                key={city}
+                className="p-2 hover:bg-lime hover:rounded-2xl cursor-pointer"
+                onClick={() => handleCitySelect(city)}
+              >
+                {city}
+              </li>
+            ))
+          ) : (
+            <li className="p-2 text-gray-500">No cities found</li>
+          )}
+        </ul>
+      )}
           </div>
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -207,7 +226,7 @@ export function Signup() {
             <select
               value={formData.carsRange}
               onChange={(e) => setFormData({ ...formData, carsRange: e.target.value })}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-lime focus:border-lime sm:text-sm rounded-xl"
             >
               <option value="">Select a range</option>
               {CARS_RANGES.map((range) => (
@@ -260,7 +279,7 @@ export function Signup() {
         return;
       }
       if (currentStep === 2) {
-        if (!formData.username || !formData.password || !formData.confirmPassword) {
+        if (!formData.email || !formData.password || !formData.confirmPassword) {
           setError('Please fill in all fields');
           return;
         }
@@ -310,7 +329,7 @@ export function Signup() {
       );
       
       await setDoc(doc(db, 'profiles', user.uid), {
-        username: formData.username,
+        username: formData.email,
         accountType: formData.accountType,
         fullName: formData.fullName,
         phone: formData.phone,
@@ -332,7 +351,7 @@ export function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen font-montserrat bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-lime shadow-xl mb-6 transform hover:scale-105 transition-transform duration-300">

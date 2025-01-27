@@ -11,6 +11,7 @@ export default {
         },
         fontFamily: {
           quicksand: ["Quicksand", "sans-serif"],
+          montserrat: ['Montserrat', 'sans-serif'],
         },
         animation: {
           'slide-in': 'slideIn 1s ease-in-out forwards',
