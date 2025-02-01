@@ -4,7 +4,7 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
-      
+        
         colors: {
           lime: "#c6ff85",
           darklime: "#94C748",

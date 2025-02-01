@@ -1,26 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+//import { useDispatch } from 'react-redux';
 import { useDropzone } from 'react-dropzone';
-import { Car as CarIcon, Upload, Plus, X } from 'lucide-react';
-import { addCar } from '../store/slices/carSlice';
+import { Car as CarIcon, Upload,   X } from 'lucide-react';
+ 
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { AppDispatch } from '../store/store';
+//import { AppDispatch } from '../store/store';
+import { collection, addDoc,     } from "firebase/firestore";
+import { db } from "../lib/firebase"; // Import Firebase Firestore instance
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 const FUEL_TYPES = ['Petrol', 'Diesel', 'Electric', 'Hybrid'];
 const CAR_TYPES = ['Sedan', 'SUV', 'Hatchback', 'MPV', 'Luxury'];
 const TRANSMISSION_TYPES = ['Manual', 'Automatic'];
 const CITIES = [
  "Bangalore",
-    "Hyderabad",
-    "Mumbai",
-    "Delhi-NCR",
-    "Chennai",
-    "Pune",
-    "Mangalore",
-    "Dombivili",
-    "Palava",
-    "Thane",
+    "Hyderabad", "Mumbai","Delhi-NCR","Chennai","Pune","Mangalore","Dombivili",    "Palava","Thane",
     "Amritsar",
     "Kolkata",
     "Ahmedabad",
@@ -40,7 +36,7 @@ interface Package {
 
 export function UploadCarPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -102,12 +98,12 @@ export function UploadCarPage() {
     setImagePreviews(newPreviews);
   };
 
-  const addPackage = () => {
-    setFormData({
-      ...formData,
-      packages: [...formData.packages, { type: 'Limited', price: 0 }],
-    });
-  };
+  // const addPackage = () => {
+  //   setFormData({
+  //     ...formData,
+  //     packages: [...formData.packages, { type: 'Limited', price: 0 }],
+  //   });
+  // };
 
   const removePackage = (index: number) => {
     const newPackages = [...formData.packages];
@@ -126,20 +122,32 @@ export function UploadCarPage() {
     setError(null);
   
     try {
-      const imageUrls = imageFiles.map((file) => URL.createObjectURL(file)); // Generate URLs
-      await dispatch(
-        addCar({
-          car: { ...formData, images: imageUrls }, // Include images
-          imageFiles,
+      const storage = getStorage();
+  
+      // Upload images and get URLs
+      const imageUrls = await Promise.all(
+        imageFiles.map(async (file) => {
+          const storageRef = ref(storage, `testpcars/${file.name}`);
+          await uploadBytes(storageRef, file);
+          return await getDownloadURL(storageRef);
         })
       );
+  
+      // Save to Firestore
+      await addDoc(collection(db, "testpcars"), {
+        ...formData,
+        images: imageUrls,
+      });
+  
       navigate("/home");
     } catch (err) {
+      console.error("Error uploading car details:", err);
       setError("Failed to upload car details");
     } finally {
       setIsSubmitting(false);
     }
   };
+  
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // To control dropdown visibility
   const [searchTerm, setSearchTerm] = useState(''); // To filter cities
@@ -462,32 +470,7 @@ export function UploadCarPage() {
                 }
               />
 
-              <Input
-                label="KM Rate"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-                value={formData.kmRate}
-                onChange={(e) =>
-                  setFormData({ ...formData, kmRate: Number(e.target.value) })
-                }
-              />
-
-              <Input
-                label="Extra Hour Rate"
-                type="number"
-                min="0"
-                step="0.01"
-                required
-                value={formData.extraHourRate}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    extraHourRate: Number(e.target.value),
-                  })
-                }
-              />
+ 
             </div>
 
             {/* Packages */}
@@ -496,7 +479,7 @@ export function UploadCarPage() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-white">
                   Package Details
                 </label>
-                <Button
+                {/* <Button
                   type="button"
                   variant="secondary"
                   onClick={addPackage}
@@ -504,7 +487,7 @@ export function UploadCarPage() {
                 >
                   <Plus className="h-4 w-4" />
                   <span>Add Package</span>
-                </Button>
+                </Button> */}
               </div>
 
               {formData.packages.map((pkg, index) => (
@@ -567,7 +550,7 @@ export function UploadCarPage() {
                   className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
                 />
                 <label className="text-sm font-medium dark:text-white text-gray-700">
-                  Monthly Rental Available
+                  Monthly Rental Prices
                 </label>
               </div>
 
@@ -629,6 +612,8 @@ export function UploadCarPage() {
                         })
                       }
                     />
+                    
+                    
                   )}
                 </div>
               )}
@@ -652,7 +637,7 @@ export function UploadCarPage() {
                   className="rounded border-gray-300 "
                 />
                 <label className="text-sm font-medium dark:text-white text-gray-700">
-                  Home Delivery/Pickup Available
+                  Home Delivery/Pickup Prices
                 </label>
               </div>
 
