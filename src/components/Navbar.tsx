@@ -36,6 +36,7 @@ export function Navbar({ isDashboardOpen, setIsDashboardOpen }: NavbarProps) {
 
                
             </button>
+            <span className='text-darklime dark:text-lime mt-1 font-semibold'>Home</span>
           </div>
           <DarkModeToggle />
         </div>

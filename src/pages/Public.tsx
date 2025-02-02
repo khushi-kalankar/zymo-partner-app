@@ -80,7 +80,7 @@ const Public = () => {
             return (
               <div
                 key={car.id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
+                className="bg-white dark:bg-gray-800 hover:shadow-custom-even duration-300 hover:shadow-lime transition hover:scale-105 ease-in-out rounded-lg shadow-lg overflow-hidden"
               >
                 <img
                   src={car.images[0] || "default_image_url"} // Display first image or fallback
@@ -105,7 +105,7 @@ const Public = () => {
                   <div className="mt-4">
                     <Button
                       onClick={() => handleBookCar(car.id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded"
+                      className="bg-lime px-4 py-2 rounded"
                     >
                       Book
                     </Button>

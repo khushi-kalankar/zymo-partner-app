@@ -80,7 +80,7 @@ export function Home() {
         {/* Car Listings */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {cars.map((car) => (
-  <div key={car.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+  <div key={car.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-custom-even hover:shadow-lime transition duration-300 ease-in-out hover:scale-105">
     {/* Ensure the imageUrl is correctly accessed */}
     <img
   src={car.images[0] || 'default_image_url'} // Display first image
@@ -98,7 +98,7 @@ export function Home() {
       <div className="mt-4">
         <Button
           onClick={() => handleEditCar(car.id)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-lime px-4 py-2 rounded"
         >
           Edit
         </Button>

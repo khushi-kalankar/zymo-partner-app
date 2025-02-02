@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -9,8 +9,27 @@ import { Button } from '../components/Button';
 import { AccountType } from '../types/auth';
 
 const CITIES = [
-  'Delhi', 'Mumbai', 'Chennai', 'Pune', 'Hyderabad', 'Kolkata', 'Jaipur', 'Noida', 'Bangalore', 'Amritsar'
-];
+  "Bangalore",
+     "Hyderabad",
+     "Mumbai",
+     "Delhi-NCR",
+     "Chennai",
+     "Pune",
+     "Mangalore",
+     "Dombivili",
+     "Palava",
+     "Thane",
+     "Amritsar",
+     "Kolkata",
+     "Ahmedabad",
+     "Bhubaneswar",
+     "Chandigarh",
+     "Coimbatore",
+     "Jaipur",
+     "Kochi",
+     "Nashik",
+     "Madurai"
+ ];
 
 
 const CARS_RANGES = ['0-5', '5-10', '10-20', '20-50', '50-100', '100+'];
@@ -87,20 +106,46 @@ export function Signup() {
     ifscCode: '',
     upiId: '',
   });
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const filteredCities = CITIES.filter((city) =>
-    city.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // To control dropdown visibility
+    const [searchTerm, setSearchTerm] = useState(''); // To filter cities
+    const [showForm, setShowForm] = useState(false);
+    
+    const dropdownRef = useRef<HTMLDivElement>(null); // Reference for dropdown
+    const inputRef = useRef<HTMLInputElement>(null); // Reference for input
   
-  const handleCitySelect = (city:string) => {
-    if (!formData.cities.includes(city)) {
-      setFormData({ ...formData, cities: [...formData.cities, city] });
-    }
-    setSearchTerm(city);
-    setShowDropdown(false);
-  };
+    const handleSelectChange = (city: string) => {
+      const newCities = formData.cities.includes(city)
+        ? formData.cities.filter((c) => c !== city)
+        : [...formData.cities, city];
+      setFormData({ ...formData, cities: newCities });
+    };
   
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    };
+  
+    const filteredCities = CITIES.filter((city) =>
+      city.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+          if (
+            dropdownRef.current &&
+            !dropdownRef.current.contains(event.target as Node) &&
+            inputRef.current &&
+            !inputRef.current.contains(event.target as Node)
+          ) {
+            setIsDropdownOpen(false);
+          }
+        };
+        setTimeout(() => {
+          setShowForm(true);
+        }, 200); // Delay of 500ms before showing the form
+      
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
 
   const steps = [
     {
@@ -191,34 +236,72 @@ export function Signup() {
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
-          <div className="space-y-2">
-            <Input 
-            label='Cities Available'
-              type='text'
-              value={searchTerm}
-              onChange={(e)=> { 
-                setSearchTerm(e.target.value); 
-                setShowDropdown(true);
-              }}
-            />
-            {showDropdown && searchTerm && (
-        <ul className="border border-gray-500 rounded-2xl shadow-md">
-          {filteredCities.length > 0 ? (
-            filteredCities.map((city) => (
-              <li
-                key={city}
-                className="p-2 hover:bg-lime hover:rounded-2xl cursor-pointer"
-                onClick={() => handleCitySelect(city)}
-              >
-                {city}
-              </li>
-            ))
-          ) : (
-            <li className="p-2 text-gray-500">No cities found</li>
-          )}
-        </ul>
-      )}
-          </div>
+          <div className=''>
+              <label className="block text-sm px-1 font-medium text-gray-700 dark:text-white mb-3">
+                Cities Available
+              </label>
+
+              {/* Input Box with Dropdown */}
+              <div className="relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={formData.cities.join(', ')} // Display selected cities as a comma-separated string
+                  readOnly
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown on click
+                  className="mt-1 dark:text-white pl-3 block w-full border border-gray-500 rounded-2xl p-2 dark:bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
+                  placeholder="Select cities..."
+                />
+
+                {/* Dropdown */}
+                {isDropdownOpen && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute left-0 w-full mt-1 bg-gray-800 00 border text-white border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto z-10"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Search cities..."
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      className="w-full p-2 border-b border-b-lime border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-lime "
+                    />
+                    <div className="max-h-48 overflow-y-auto">
+                      {filteredCities.map((city) => (
+                        <div
+                          key={city}
+                          className="flex items-center space-x-2 p-2 hover:bg-lime/30  cursor-pointer"
+                          onClick={() => handleSelectChange(city)} // Toggle checkbox when clicking the city
+                        >
+
+                          <span className="text-sm text-gray- ">{city}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Display Selected Cities Below the Input */}
+              <div className="mt-4">
+                {formData.cities.map((city) => (
+                  <span
+                    key={city}
+                    className="inline-flex items-center px-2 py-1 text-xs bg-lime rounded-full mr-2 mb-2"
+                  >
+                    {city}
+                    <button
+                      type="button"
+                      onClick={() => handleSelectChange(city)} // Deselect the city
+                      className="ml-1 text-sm text-red-600"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Number of Cars

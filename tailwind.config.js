@@ -6,8 +6,8 @@ export default {
     extend: {
         
         colors: {
-          lime: "#c6ff85",
-          darklime: "#94C748",
+          lime: "#e9ff81",
+          darklime: "#bed459",
         },
         fontFamily: {
           quicksand: ["Quicksand", "sans-serif"],
@@ -27,6 +27,9 @@ export default {
               opacity: '1',
             },
           },
+      },
+      boxShadow: {
+        'custom-even': '0 0px 10px rgba(0, 0, 0, 0.1)',
       },
     },
   },
