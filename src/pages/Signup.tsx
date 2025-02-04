@@ -53,7 +53,7 @@ function Step({ isActive, isCompleted, title, stepNumber, totalSteps, children }
             ${isCompleted 
               ? 'bg-green-500 border-green-500 text-white' 
               : isActive 
-                ? 'bg-lime-400 border-lime-400 text-white shadow-lg shadow-lime-200'
+                ? 'bg-lime-400 border-lime-400 text-white shadow-lg'
                 : 'bg-white border-gray-300 text-gray-500'
             }
           `}>
@@ -323,9 +323,12 @@ export function Signup() {
       ),
     },
     {
-      title: 'Payment Information',
+      title: 'Bank Account Details',
       content: (
         <div className="space-y-4">
+          <h1>
+          Please provide the bank account details where the payment will be transferred.
+          </h1>
           <Input
             id="bankAccount"
             label="Bank Account Number"
@@ -448,7 +451,7 @@ export function Signup() {
           </p>
         </div>
 
-        <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
+        <div className="border border-lime backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
             {error && (
               <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">

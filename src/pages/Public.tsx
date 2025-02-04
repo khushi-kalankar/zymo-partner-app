@@ -94,7 +94,7 @@ const Public = () => {
                   <p className="text-gray-600 dark:text-gray-300">{car.cities.join(", ")}</p>
                   <p className="text-gray-800 dark:text-gray-100 mt-2">Fuel Type: {car.fuelType}</p>
                   <p className="text-gray-800 dark:text-gray-100">Transmission: {car.transmissionType}</p>
-                  <p className="text-gray-800 dark:text-gray-100">Year: {car.yearOfRegistration}</p>
+                  <p className="text-gray-800 dark:text-gray-100">Year of Registration: {car.yearOfRegistration}</p>
                   <p className="text-gray-800 dark:text-gray-100">Deposit: ${car.securityDeposit}</p>
 
                   {/* Display the user who uploaded the car */}

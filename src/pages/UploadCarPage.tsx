@@ -9,8 +9,8 @@ import { Input } from "../components/Input";
 //import { AppDispatch } from '../store/store';
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../lib/firebase"; // Import Firebase Firestore instance
-
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import PickupForm from "../components/PickupForm";
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
@@ -119,6 +119,12 @@ export function UploadCarPage() {
     newPackages.splice(index, 1);
     setFormData({ ...formData, packages: newPackages });
   };
+  const handlePickupLocationChange = (location: string) => {
+    setFormData((prevDetails) => ({
+      ...prevDetails,
+      pickupLocation: location,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,6 +133,7 @@ export function UploadCarPage() {
       return;
     }
 
+    
     setIsSubmitting(true);
     setError(null);
 
@@ -353,16 +360,11 @@ export function UploadCarPage() {
                   ))}
                 </div>
               </div>
-
-              <Input
-                label="Pickup Location"
-                required
-                value={formData.pickupLocation}
-                onChange={(e) =>
-                  setFormData({ ...formData, pickupLocation: e.target.value })
-                }
-              />
-
+              <div>
+              <PickupForm onLocationChange={handlePickupLocationChange}/>
+              <p className="ml-1 dark:text-white">
+        Selected Pickup Location: {formData.pickupLocation}
+      </p></div>
               <Input
                 label="Security Deposit"
                 type="number"
@@ -759,7 +761,8 @@ export function UploadCarPage() {
                 )}
               </div>
             </div>
-
+              <div>
+              </div>
             <div className="flex justify-center space-x-4">
               <Button
                 type="button"
