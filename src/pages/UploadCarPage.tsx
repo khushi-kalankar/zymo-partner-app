@@ -68,11 +68,18 @@ export function UploadCarPage() {
     monthlyRental: {
       available: false,
       rate: 0,
-      limit: "Unlimited" as "Unlimited" | "Limited",
+      limit: "Limit type" as "Limit Type" | "Unlimited" | "Limited",
+      limitValue: 0,
+    },
+    weeklyRental: {
+      available: false,
+      rate: 0,
+      limit: "Limit Type" as "Limit Type" | "Unlimited" | "Limited",
       limitValue: 0,
     },
     deliveryCharges: {
       enabled: false,
+      Range: 0 ,
       charges: {
         "0-10": 0,
         "10-25": 0,
@@ -536,15 +543,6 @@ export function UploadCarPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-white">
                     Package Details
                   </label>
-                  {/* <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={addPackage}
-                  className="flex bg-lime hover:bg-lime/70 items-center space-x-1"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Add Package</span>
-                </Button> */}
                 </div>
 
                 {formData.packages.map((pkg, index) => (
@@ -560,6 +558,7 @@ export function UploadCarPage() {
                       }}
                       className="block w-40 rounded-2xl p-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm border"
                     >
+                      <option value="Type">Limit Type</option>
                       <option value="Limited">Limited</option>
                       <option value="Unlimited">Unlimited</option>
                     </select>
@@ -607,7 +606,7 @@ export function UploadCarPage() {
                     className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
                   />
                   <label className="text-sm font-medium dark:text-white text-gray-700">
-                    Monthly Rental Prices
+                    Monthly Rental Prices ( 30 Days )
                   </label>
                 </div>
 
@@ -631,7 +630,7 @@ export function UploadCarPage() {
                     />
 
                     <div>
-                      <label className="mx-1 block text-sm font-medium dark:text-white text-gray-700 mb-2">
+                      <label className="mx-1 block text-sm font-medium dark:text-white text-gray-700 mb-4">
                         Limit Type
                       </label>
                       <select
@@ -641,12 +640,13 @@ export function UploadCarPage() {
                             ...formData,
                             monthlyRental: {
                               ...formData.monthlyRental,
-                              limit: e.target.value as "Unlimited" | "Limited",
+                              limit: e.target.value as "Limit Type" | "Unlimited" | "Limited",
                             },
                           })
                         }
                         className="mt-1 block p-2 border border-gray-700 dark:bg-gray-800 dark:text-white w-full rounded-2xl shadow-sm "
                       >
+                        <option value="Type">Limit Type</option>
                         <option value="Unlimited">Unlimited</option>
                         <option value="Limited">Limited</option>
                       </select>
@@ -664,6 +664,127 @@ export function UploadCarPage() {
                             ...formData,
                             monthlyRental: {
                               ...formData.monthlyRental,
+                              limitValue: Number(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    )}
+                    {formData.monthlyRental.limit === "Unlimited" && (
+                      <Input
+                        label="Limit Value (/HR)"
+                        type="number"
+                        min="0"
+                        required
+                        value={formData.monthlyRental.limitValue}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            monthlyRental: {
+                              ...formData.monthlyRental,
+                              limitValue: Number(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Weekly Rental */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.weeklyRental.available}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        weeklyRental: {
+                          ...formData.weeklyRental,
+                          available: e.target.checked,
+                        },
+                      })
+                    }
+                    className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
+                  />
+                  <label className="text-sm font-medium dark:text-white text-gray-700">
+                    Weekly Rental Prices ( 7 days )
+                  </label>
+                </div>
+
+                {formData.weeklyRental.available && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
+                    <Input
+                      label="Weekly Rental Prices"
+                      type="number"
+                      min="0"
+                      required
+                      value={formData.weeklyRental.rate}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                         weeklyRental: {
+                            ...formData.weeklyRental,
+                            rate: Number(e.target.value),
+                          },
+                        })
+                      }
+                    />
+
+                    <div>
+                      <label className="mx-1 block text-sm font-medium dark:text-white text-gray-700 mb-4">
+                        Limit Type
+                      </label>
+                      <select
+                        value={formData.weeklyRental.limit}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                           weeklyRental: {
+                              ...formData.weeklyRental,
+                              limit: e.target.value as "Limit Type" | "Unlimited" | "Limited",
+                            },
+                          })
+                        }
+                        className="mt-1 block p-2 border border-gray-700 dark:bg-gray-800 dark:text-white w-full rounded-2xl shadow-sm "
+                      >
+                        <option value="Type">Limit Type</option>
+                        <option value="Unlimited">Unlimited</option>
+                        <option value="Limited">Limited</option>
+                      </select>
+                    </div>
+
+                    {formData.weeklyRental.limit === "Limited" && (
+                      <Input
+                        label="Limit Value (KM)"
+                        type="number"
+                        min="0"
+                        required
+                        value={formData.weeklyRental.limitValue}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                           weeklyRental: {
+                              ...formData.weeklyRental,
+                              limitValue: Number(e.target.value),
+                            },
+                          })
+                        }
+                      />
+                    )}
+                    {formData.weeklyRental.limit === "Unlimited" && (
+                      <Input
+                        label="Limit Value (/HR)"
+                        type="number"
+                        min="0"
+                        required
+                        value={formData.weeklyRental.limitValue}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                           weeklyRental: {
+                              ...formData.weeklyRental,
                               limitValue: Number(e.target.value),
                             },
                           })
@@ -701,7 +822,7 @@ export function UploadCarPage() {
                     <Input
                       label="0-10 km"
                       type="number"
-                      min="0"
+                      min=""
                       required
                       value={formData.deliveryCharges.charges["0-10"]}
                       onChange={(e) =>
