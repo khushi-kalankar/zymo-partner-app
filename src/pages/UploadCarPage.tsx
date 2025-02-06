@@ -69,13 +69,15 @@ export function UploadCarPage() {
       available: false,
       rate: 0,
       limit: "Limit type" as "Limit Type" | "Unlimited" | "Limited",
-      limitValue: 0,
+      limitValueKm: 0,
+      limitValueHr:0,
     },
     weeklyRental: {
       available: false,
       rate: 0,
       limit: "Limit Type" as "Limit Type" | "Unlimited" | "Limited",
-      limitValue: 0,
+      limitValueKm: 0,
+      limitValueHr:0,
     },
     deliveryCharges: {
       enabled: false,
@@ -380,7 +382,7 @@ export function UploadCarPage() {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    securityDeposit: Number(e.target.value),
+                    securityDeposit: e.target.valueAsNumber,
                   })
                 }
               />
@@ -487,7 +489,7 @@ export function UploadCarPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      minBookingDuration: Number(e.target.value),
+                      minBookingDuration: e.target.valueAsNumber,
                     })
                   }
                 />
@@ -623,7 +625,7 @@ export function UploadCarPage() {
                           ...formData,
                           monthlyRental: {
                             ...formData.monthlyRental,
-                            rate: Number(e.target.value),
+                            rate: e.target.valueAsNumber,
                           },
                         })
                       }
@@ -653,36 +655,54 @@ export function UploadCarPage() {
                     </div>
 
                     {formData.monthlyRental.limit === "Limited" && (
+                      <div>
                       <Input
-                        label="Limit Value (KM)"
+                        label="Extra Km Rate"
                         type="number"
                         min="0"
                         required
-                        value={formData.monthlyRental.limitValue}
+                        value={formData.monthlyRental.limitValueKm}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
                             monthlyRental: {
                               ...formData.monthlyRental,
-                              limitValue: Number(e.target.value),
+                              limitValueKm: e.target.valueAsNumber,
                             },
                           })
                         }
                       />
-                    )}
-                    {formData.monthlyRental.limit === "Unlimited" && (
                       <Input
-                        label="Limit Value (/HR)"
+                        label="Extra Hr Rate"
                         type="number"
                         min="0"
                         required
-                        value={formData.monthlyRental.limitValue}
+                        value={formData.monthlyRental.limitValueHr}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
                             monthlyRental: {
                               ...formData.monthlyRental,
-                              limitValue: Number(e.target.value),
+                              limitValueHr: e.target.valueAsNumber,
+                            },
+                          })
+                        }
+                      />
+                      </div>
+                    )}
+                    {formData.monthlyRental.limit === "Unlimited" && (
+                      <Input
+                        label="Extra Hr rate"
+                        type="number"
+                        min="0"
+                        required
+                        value={formData.monthlyRental.limitValueHr}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            monthlyRental: {
+                              ...formData.monthlyRental,
+                              limitValueHr: e.target.valueAsNumber,
                             },
                           })
                         }
@@ -726,7 +746,7 @@ export function UploadCarPage() {
                           ...formData,
                          weeklyRental: {
                             ...formData.weeklyRental,
-                            rate: Number(e.target.value),
+                            rate: e.target.valueAsNumber,
                           },
                         })
                       }
@@ -756,36 +776,55 @@ export function UploadCarPage() {
                     </div>
 
                     {formData.weeklyRental.limit === "Limited" && (
-                      <Input
-                        label="Limit Value (KM)"
+                      <div>
+                        <Input
+                        label="Extra Km rate"
                         type="number"
                         min="0"
                         required
-                        value={formData.weeklyRental.limitValue}
+                        value={formData.weeklyRental.limitValueKm}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
                            weeklyRental: {
                               ...formData.weeklyRental,
-                              limitValue: Number(e.target.value),
+                              limitValueKm: e.target.valueAsNumber,
                             },
                           })
                         }
                       />
-                    )}
-                    {formData.weeklyRental.limit === "Unlimited" && (
                       <Input
-                        label="Limit Value (/HR)"
+                        label="Extra Hr rate"
                         type="number"
                         min="0"
                         required
-                        value={formData.weeklyRental.limitValue}
+                        value={formData.weeklyRental.limitValueHr}
                         onChange={(e) =>
                           setFormData({
                             ...formData,
                            weeklyRental: {
                               ...formData.weeklyRental,
-                              limitValue: Number(e.target.value),
+                              limitValueHr: e.target.valueAsNumber,
+                            },
+                          })
+                        }
+                      />
+                      </div>
+                      
+                    )}
+                    {formData.weeklyRental.limit === "Unlimited" && (
+                      <Input
+                        label="Extra Hr Rate"
+                        type="number"
+                        min="0"
+                        required
+                        value={formData.weeklyRental.limitValueHr}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                           weeklyRental: {
+                              ...formData.weeklyRental,
+                              limitValueHr: e.target.valueAsNumber,
                             },
                           })
                         }
@@ -832,7 +871,7 @@ export function UploadCarPage() {
                             ...formData.deliveryCharges,
                             charges: {
                               ...formData.deliveryCharges.charges,
-                              "0-10": Number(e.target.value),
+                            "0-10": e.target.valueAsNumber,
                             },
                           },
                         })
@@ -852,7 +891,7 @@ export function UploadCarPage() {
                             ...formData.deliveryCharges,
                             charges: {
                               ...formData.deliveryCharges.charges,
-                              "10-25": Number(e.target.value),
+                              "10-25": e.target.valueAsNumber,
                             },
                           },
                         })
@@ -872,7 +911,7 @@ export function UploadCarPage() {
                             ...formData.deliveryCharges,
                             charges: {
                               ...formData.deliveryCharges.charges,
-                              "25-50": Number(e.target.value),
+                              "25-50": e.target.valueAsNumber,
                             },
                           },
                         })
