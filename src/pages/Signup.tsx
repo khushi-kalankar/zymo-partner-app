@@ -8,28 +8,7 @@ import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 import { AccountType } from '../types/auth';
 
-const CITIES = [
-  "Bangalore",
-     "Hyderabad",
-     "Mumbai",
-     "Delhi-NCR",
-     "Chennai",
-     "Pune",
-     "Mangalore",
-     "Dombivili",
-     "Palava",
-     "Thane",
-     "Amritsar",
-     "Kolkata",
-     "Ahmedabad",
-     "Bhubaneswar",
-     "Chandigarh",
-     "Coimbatore",
-     "Jaipur",
-     "Kochi",
-     "Nashik",
-     "Madurai"
- ];
+
 
 
 const CARS_RANGES = ['0-5', '5-10', '10-20', '20-50', '50-100', '100+'];
@@ -106,6 +85,7 @@ export function Signup() {
     ifscCode: '',
     upiId: '',
   });
+  const [cities, setCities] = useState([]); 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // To control dropdown visibility
     const [searchTerm, setSearchTerm] = useState(''); // To filter cities
     const [showForm, setShowForm] = useState(false);
@@ -113,18 +93,33 @@ export function Signup() {
     const dropdownRef = useRef<HTMLDivElement>(null); // Reference for dropdown
     const inputRef = useRef<HTMLInputElement>(null); // Reference for input
   
-    const handleSelectChange = (city: string) => {
-      const newCities = formData.cities.includes(city)
-        ? formData.cities.filter((c) => c !== city)
-        : [...formData.cities, city];
-      setFormData({ ...formData, cities: newCities });
-    };
+    useEffect(() => {
+      async function fetchCities() {
+          try {
+              const response = await fetch("http://localhost:3000/zoomcar/cities");
+              const data = await response.json();
+              setCities(data.cities || []);
+          } catch (error) {
+              console.error("Error fetching cities:", error);
+          }
+      }
+      fetchCities();
+  }, []);
+
   
+  const handleSelectChange = (city) => {
+      const newCities = formData.cities.includes(city)
+          ? formData.cities.filter((c) => c !== city) 
+          : [...formData.cities, city]; 
+
+      setFormData({ ...formData, cities: newCities });
+  };
+
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(e.target.value);
     };
   
-    const filteredCities = CITIES.filter((city) =>
+    const filteredCities = cities.filter((city) =>
       city.toLowerCase().includes(searchTerm.toLowerCase())
     );
   
