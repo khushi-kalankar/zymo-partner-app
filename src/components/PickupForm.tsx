@@ -31,7 +31,7 @@ const PickupForm: React.FC<PickupFormProps> = ({ onLocationChange }) => {
   }, [initializeAutocomplete]);
 
   return (
-    <div className="p-1 max-w-xl mx-auto">
+    <div className="p-1">
       <h2 className="mb-4 dark:text-white">Pickup Location</h2>
       <div className="mb-4">
         <input
