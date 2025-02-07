@@ -74,7 +74,7 @@ function Step({ isActive, isCompleted, title, stepNumber, totalSteps, children }
             {title}
           </h3>
           {isActive && children && (
-            <div className="mt-6 bg-white/60 rounded-xl p-6 shadow-lg border border-lime transition-all duration-300 ease-in-out transform hover:shadow-xl">
+            <div className="mt-6 bg-white/10 rounded-xl text-white p-6 shadow-lg border border-lime transition-all duration-300 ease-in-out transform hover:shadow-xl">
               {children}
             </div>
           )}
@@ -145,6 +145,7 @@ export function Signup() {
       
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+        
       }, []);
 
   const steps = [
@@ -158,7 +159,7 @@ export function Signup() {
                 key={type}
                 type="button"
                 className={`
-                  px-4 py-3 border rounded-lg font-medium  hover:border-lime hover:bg-lime
+                  px-4 py-3 border rounded-lg font-medium  hover:border-lime hover:shadow-sm hover:shadow-lime
                   ${formData.accountType === type
                     ? 'bg-lime text-black'
                     : 'border-gray-200'
@@ -237,7 +238,7 @@ export function Signup() {
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
           <div className=''>
-              <label className="block text-sm px-1 font-medium text-gray-700 dark:text-white mb-3">
+              <label className="block text-sm px-1 font-medium mb-3">
                 Cities Available
               </label>
 
@@ -249,7 +250,7 @@ export function Signup() {
                   value={formData.cities.join(', ')} // Display selected cities as a comma-separated string
                   readOnly
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown on click
-                  className="mt-1 dark:text-white pl-3 block w-full border border-gray-500 rounded-2xl p-2 dark:bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
+                  className="mt-1 pl-3 block w-full border text-white border-gray-500 rounded-2xl p-2 bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
                   placeholder="Select cities..."
                 />
 
@@ -264,7 +265,7 @@ export function Signup() {
                       placeholder="Search cities..."
                       value={searchTerm}
                       onChange={handleSearchChange}
-                      className="w-full p-2 border-b border-b-lime border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-lime "
+                      className="w-full p-2 border-b border-b-lime border-gray-300 bg-gray-800 focus:ring-lime "
                     />
                     <div className="max-h-48 overflow-y-auto">
                       {filteredCities.map((city) => (
@@ -274,7 +275,7 @@ export function Signup() {
                           onClick={() => handleSelectChange(city)} // Toggle checkbox when clicking the city
                         >
 
-                          <span className="text-sm text-gray- ">{city}</span>
+                          <span className="text-sm ">{city}</span>
                         </div>
                       ))}
                     </div>
@@ -287,7 +288,7 @@ export function Signup() {
                 {formData.cities.map((city) => (
                   <span
                     key={city}
-                    className="inline-flex items-center px-2 py-1 text-xs bg-lime rounded-full mr-2 mb-2"
+                    className="inline-flex items-center px-2 py-1 text-xs text-gray-800 bg-lime rounded-full mr-2 mb-2"
                   >
                     {city}
                     <button
@@ -303,13 +304,13 @@ export function Signup() {
             </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium">
               Number of Cars
             </label>
             <select
               value={formData.carsRange}
               onChange={(e) => setFormData({ ...formData, carsRange: e.target.value })}
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-lime focus:border-lime sm:text-sm rounded-xl"
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-gray-800 border border-gray-500 focus:outline-none focus:ring-lime focus:border-lime sm:text-sm rounded-2xl"
             >
               <option value="">Select a range</option>
               {CARS_RANGES.map((range) => (
@@ -325,10 +326,10 @@ export function Signup() {
     {
       title: 'Bank Account Details',
       content: (
-        <div className="space-y-4">
-          <h1>
+        <div className="space-y-4 max-w-sm">
+          <div>
           Please provide the bank account details where the payment will be transferred.
-          </h1>
+          </div>
           <Input
             id="bankAccount"
             label="Bank Account Number"
