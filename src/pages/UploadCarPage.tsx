@@ -8,34 +8,13 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 //import { AppDispatch } from '../store/store';
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "../lib/firebase"; // Import Firebase Firestore instance
+import { doc, getDoc } from "firebase/firestore";
+import { db,auth } from "../lib/firebase"; // Import Firebase Firestore instance
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PickupForm from "../components/PickupForm";
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
-const CITIES = [
-  "Bangalore",
-  "Hyderabad",
-  "Mumbai",
-  "Delhi-NCR",
-  "Chennai",
-  "Pune",
-  "Mangalore",
-  "Dombivili",
-  "Palava",
-  "Thane",
-  "Amritsar",
-  "Kolkata",
-  "Ahmedabad",
-  "Bhubaneswar",
-  "Chandigarh",
-  "Coimbatore",
-  "Jaipur",
-  "Kochi",
-  "Nashik",
-  "Madurai",
-];
 
 interface Package {
   type: "Unlimited" | "Limited";
@@ -50,6 +29,7 @@ export function UploadCarPage() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [usercities, setUserCities] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -190,12 +170,23 @@ export function UploadCarPage() {
     setSearchTerm(e.target.value);
   };
 
-  const filteredCities = CITIES.filter((city) =>
+  const filteredCities = usercities.filter((city) =>
     city.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Close dropdown if the user clicks outside of it
   useEffect(() => {
+    const fetchUserCities = async () => {
+      const user = auth.currentUser;
+      if (!user) return; 
+      const userDocRef = doc(db, "profiles", user.uid); // Reference to user's Firestore doc
+      const userDoc = await getDoc(userDocRef);
+  
+      if (userDoc.exists()) {
+        setUserCities(userDoc.data().cities || []); 
+      }
+    };
+  
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -206,14 +197,16 @@ export function UploadCarPage() {
         setIsDropdownOpen(false);
       }
     };
+  
+    fetchUserCities(); 
     setTimeout(() => {
       setShowForm(true);
-    }, 200); // Delay of 500ms before showing the form
-
+    }, 200); // Delay of 200ms before showing the form
+  
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+  }, []); 
+  
   return (
     <div className="bg-lime rounded-2xl dark:bg-transparent">
       <div className="max-w-4xl mx-auto px-4 py-8">
