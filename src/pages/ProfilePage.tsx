@@ -55,19 +55,11 @@ export function ProfilePage() {
 
         {/* Profile Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label={<span className="text-darklime dark:text-lime">Username</span>}
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            className="text-white"
-            disabled={!isEditing}
-          />
+          
           <Input
             label={<span className="text-darklime dark:text-lime">Email</span>}
             type="email"
-            value={formData.email}
+            value={formData.username}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
