@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { User, Save } from 'lucide-react';
-import { RootState } from '../store/store';
+import { RootState, AppDispatch } from '../store/store';
 import { fetchProfile, updateProfile } from '../store/slices/profileSlice';
 import { Input } from '../components/Input';
 
 export function ProfilePage() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.profile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
