@@ -35,7 +35,7 @@ export function ProfilePage() {
   return (
     <div className='bg-lime rounded-2xl dark:bg-transparent'>
     <div className="max-w-4xl mx-auto px-4 py-8 text-lime-400">
-  <div className="dark:bg-gray-900 bg-white rounded-2xl shadow-lg p-6 animate-slide-in border border-lime ">
+  <div className="dark:bg-darkgray bg-white rounded-2xl shadow-lg p-6 animate-slide-in border border-lime ">
         {/* Profile Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">

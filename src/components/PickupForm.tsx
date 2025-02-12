@@ -37,7 +37,7 @@ const PickupForm: React.FC<PickupFormProps> = ({ onLocationChange }) => {
         <input
           id="autocomplete"
           type="text"
-          className="w-full p-2 border dark:bg-gray-800 dark:text-white border-gray-500 rounded-2xl"
+          className="w-full p-2 border dark:bg-lightgray dark:text-white border-gray-500 rounded-2xl"
           placeholder="Search for pickup location in India"
         />
       </div>     

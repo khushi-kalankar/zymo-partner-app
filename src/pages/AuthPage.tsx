@@ -8,7 +8,7 @@ export function AuthPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen font-montserrat bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen font-montserrat bg-darkgray flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
       
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">

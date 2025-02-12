@@ -7,7 +7,7 @@ export function DarkModeToggle() {
   return (
     <button
       onClick={toggle}
-      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-lightgray"
       aria-label="Toggle dark mode"
     >
       {isDark ? (

@@ -8,6 +8,8 @@ export default {
         colors: {
           lime: "#e9ff81",
           darklime: "#bed459",
+          darkgray: '#212121',
+          lightgray: '#424242',
         },
         fontFamily: {
           quicksand: ["Quicksand", "sans-serif"],

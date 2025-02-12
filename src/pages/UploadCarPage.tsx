@@ -218,7 +218,7 @@ export function UploadCarPage() {
         <div className="bg-lime rounded-2xl dark:bg-transparent">
             <div className="max-w-4xl mx-auto px-4 py-8">
                 <div
-                    className={`dark:bg-gray-900 bg-white rounded-3xl shadow-lg p-6 border border-lime transition-all duration-1000 ease-in-out
+                    className={`dark:bg-darkgray bg-white rounded-3xl shadow-lg p-6 border border-lime transition-all duration-1000 ease-in-out
             ${
                 showForm
                     ? "opacity-100 translate-y-0"
@@ -328,7 +328,7 @@ export function UploadCarPage() {
                                         onClick={() =>
                                             setIsDropdownOpen(!isDropdownOpen)
                                         } // Toggle dropdown on click
-                                        className="mt-1 dark:text-white pl-3 block w-full border border-gray-500 rounded-2xl p-2 dark:bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
+                                        className="mt-1 dark:text-white pl-3 block w-full border border-gray-500 rounded-2xl p-2 dark:bg-lightgray dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
                                         placeholder="Select cities..."
                                     />
 
@@ -336,14 +336,14 @@ export function UploadCarPage() {
                                     {isDropdownOpen && (
                                         <div
                                             ref={dropdownRef}
-                                            className="absolute left-0 w-full mt-1 bg-white 00 border border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto dark:bg-gray-800 z-10"
+                                            className="absolute left-0 w-full mt-1 bg-white 00 border border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto dark:bg-lightgray z-10"
                                         >
                                             <input
                                                 type="text"
                                                 placeholder="Search cities..."
                                                 value={searchTerm}
                                                 onChange={handleSearchChange}
-                                                className="w-full p-2 border-b border-b-lime border-gray-300 dark:bg-gray-800 dark:text-white focus:ring-lime "
+                                                className="w-full p-2 border-b border-b-lime border-gray-300 dark:bg-lightgray dark:text-white focus:ring-lime "
                                             />
                                             <div className="max-h-48 overflow-y-auto">
                                                 {filteredCities.map((city) => (
@@ -430,7 +430,7 @@ export function UploadCarPage() {
                                                 ),
                                             })
                                         }
-                                        className="mt-1 block w-full rounded-2xl border border-gray-800 p-2 dark:bg-gray-800 dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                                        className="mt-1 block w-full rounded-2xl border border-lightgray p-2 dark:bg-lightgray dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                                     >
                                         {Array.from(
                                             { length: 20 },
@@ -456,7 +456,7 @@ export function UploadCarPage() {
                                                 fuelType: e.target.value,
                                             })
                                         }
-                                        className="mt-1 block w-full rounded-2xl p-2 dark:text-white dark:bg-gray-800 border border-gray-800 shadow-sm "
+                                        className="mt-1 block w-full rounded-2xl p-2 dark:text-white dark:bg-lightgray border border-lightgray shadow-sm "
                                     >
                                         {FUEL_TYPES.map((type) => (
                                             <option
@@ -482,7 +482,7 @@ export function UploadCarPage() {
                                                 carType: e.target.value,
                                             })
                                         }
-                                        className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                                        className="mt-1 block w-full border border-lightgray rounded-2xl p-2 dark:bg-lightgray dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
                                     >
                                         {CAR_TYPES.map((type) => (
                                             <option key={type} value={type}>
@@ -505,7 +505,7 @@ export function UploadCarPage() {
                                                     e.target.value,
                                             })
                                         }
-                                        className="mt-1 block w-full border border-gray-800 rounded-2xl p-2 dark:bg-gray-800 dark:text-white shadow-sm "
+                                        className="mt-1 block w-full border border-lightgray rounded-2xl p-2 dark:bg-lightgray dark:text-white shadow-sm "
                                     >
                                         {TRANSMISSION_TYPES.map((type) => (
                                             <option key={type} value={type}>
@@ -604,7 +604,7 @@ export function UploadCarPage() {
                                                     packages: newPackages,
                                                 });
                                             }}
-                                            className="block w-40 rounded-2xl p-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 shadow-sm border"
+                                            className="block w-40 rounded-2xl p-2 dark:bg-lightgray dark:text-white dark:border-gray-700 shadow-sm border"
                                         >
                                             <option value="Type">
                                                 Limit Type
@@ -713,7 +713,7 @@ export function UploadCarPage() {
                                                         },
                                                     })
                                                 }
-                                                className="mt-1 block p-2 border border-gray-700 dark:bg-gray-800 dark:text-white w-full rounded-2xl shadow-sm "
+                                                className="mt-1 block p-2 border border-gray-700 dark:bg-lightgray dark:text-white w-full rounded-2xl shadow-sm "
                                             >
                                                 <option value="Type">
                                                     Limit Type
@@ -866,7 +866,7 @@ export function UploadCarPage() {
                                                         },
                                                     })
                                                 }
-                                                className="mt-1 block p-2 border border-gray-700 dark:bg-gray-800 dark:text-white w-full rounded-2xl shadow-sm "
+                                                className="mt-1 block p-2 border border-gray-700 dark:bg-lightgray dark:text-white w-full rounded-2xl shadow-sm "
                                             >
                                                 <option value="Type">
                                                     Limit Type

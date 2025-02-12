@@ -290,7 +290,7 @@ export function Signup() {
                                 onClick={() =>
                                     setIsDropdownOpen(!isDropdownOpen)
                                 } // Toggle dropdown on click
-                                className="mt-1 pl-3 block w-full border text-white border-gray-500 rounded-2xl p-2 bg-gray-800 dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
+                                className="mt-1 pl-3 block w-full border text-white border-gray-500 rounded-2xl p-2 bg-lightgray dark:border-gray-700 shadow-sm focus:ring-lime focus:border-lime"
                                 placeholder="Select cities..."
                             />
 
@@ -298,14 +298,14 @@ export function Signup() {
                             {isDropdownOpen && (
                                 <div
                                     ref={dropdownRef}
-                                    className="absolute left-0 w-full mt-1 bg-gray-800 00 border text-white border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto z-10"
+                                    className="absolute left-0 w-full mt-1 bg-lightgray 00 border text-white border-lime rounded-2xl shadow-lg max-h-60 overflow-y-auto z-10"
                                 >
                                     <input
                                         type="text"
                                         placeholder="Search cities..."
                                         value={searchTerm}
                                         onChange={handleSearchChange}
-                                        className="w-full p-2 border-b border-b-lime border-gray-300 bg-gray-800 focus:ring-lime "
+                                        className="w-full p-2 border-b border-b-lime border-gray-300 bg-lightgray focus:ring-lime "
                                     />
                                     <div className="max-h-48 overflow-y-auto">
                                         {filteredCities.map((city) => (
@@ -331,7 +331,7 @@ export function Signup() {
                             {formData.cities.map((city) => (
                                 <span
                                     key={city}
-                                    className="inline-flex items-center px-2 py-1 text-xs text-gray-800 bg-lime rounded-full mr-2 mb-2"
+                                    className="inline-flex items-center px-2 py-1 text-xs text-lightgray bg-lime rounded-full mr-2 mb-2"
                                 >
                                     {city}
                                     <button
@@ -358,7 +358,7 @@ export function Signup() {
                                     carsRange: e.target.value,
                                 })
                             }
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-gray-800 border border-gray-500 focus:outline-none focus:ring-lime focus:border-lime sm:text-sm rounded-2xl"
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base bg-lightgray border border-gray-500 focus:outline-none focus:ring-lime focus:border-lime sm:text-sm rounded-2xl"
                         >
                             <option value="">Select a range</option>
                             {CARS_RANGES.map((range) => (
@@ -503,7 +503,7 @@ export function Signup() {
     };
 
     return (
-        <div className="min-h-screen font-montserrat bg-gray-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen font-montserrat bg-darkgray flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-lime shadow-xl mb-6 transform hover:scale-105 transition-transform duration-300">
