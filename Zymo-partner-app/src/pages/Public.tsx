@@ -69,9 +69,9 @@ const Public = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-darkgray py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-8">
+        <h1 className="text-3xl font-semibold text-center text-lightgray dark:text-gray-100 mb-8">
           All Car Listings
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -80,7 +80,7 @@ const Public = () => {
             return (
               <div
                 key={car.id}
-                className="bg-white dark:bg-gray-800 hover:shadow-custom-even duration-300 hover:shadow-lime transition hover:scale-105 ease-in-out rounded-lg shadow-lg overflow-hidden"
+                className="bg-white dark:bg-lightgray hover:shadow-custom-even duration-300 hover:shadow-lime transition hover:scale-105 ease-in-out rounded-lg shadow-lg overflow-hidden"
               >
                 <img
                   src={car.images[0] || "default_image_url"} // Display first image or fallback
@@ -88,14 +88,14 @@ const Public = () => {
                   className="w-full h-48 object-cover"
                 />
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                  <h2 className="text-xl font-semibold text-lightgray dark:text-gray-100">
                     {car.name}
                   </h2>
                   <p className="text-gray-600 dark:text-gray-300">{car.cities.join(", ")}</p>
-                  <p className="text-gray-800 dark:text-gray-100 mt-2">Fuel Type: {car.fuelType}</p>
-                  <p className="text-gray-800 dark:text-gray-100">Transmission: {car.transmissionType}</p>
-                  <p className="text-gray-800 dark:text-gray-100">Year of Registration: {car.yearOfRegistration}</p>
-                  <p className="text-gray-800 dark:text-gray-100">Deposit: ${car.securityDeposit}</p>
+                  <p className="text-lightgray dark:text-gray-100 mt-2">Fuel Type: {car.fuelType}</p>
+                  <p className="text-lightgray dark:text-gray-100">Transmission: {car.transmissionType}</p>
+                  <p className="text-lightgray dark:text-gray-100">Year of Registration: {car.yearOfRegistration}</p>
+                  <p className="text-lightgray dark:text-gray-100">Deposit: ${car.securityDeposit}</p>
 
                   {/* Display the user who uploaded the car */}
                   <p className="text-gray-600 dark:text-gray-300 mt-2">

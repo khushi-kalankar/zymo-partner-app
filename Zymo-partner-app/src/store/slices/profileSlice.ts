@@ -63,7 +63,7 @@ const profileSlice = createSlice({
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
-        return { ...state, ...action.payload };
+        Object.assign(state, action.payload); // ✅ Directly update state properties
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
@@ -75,7 +75,7 @@ const profileSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
-        return { ...state, ...action.payload };
+        Object.assign(state, action.payload); // Correct state update
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = false;

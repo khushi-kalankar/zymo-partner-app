@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { User, Save } from 'lucide-react';
-import { RootState } from '../store/store';
+import { RootState, AppDispatch } from '../store/store';
 import { fetchProfile, updateProfile } from '../store/slices/profileSlice';
 import { Input } from '../components/Input';
 
 export function ProfilePage() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const profile = useSelector((state: RootState) => state.profile);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(profile);
@@ -35,7 +35,7 @@ export function ProfilePage() {
   return (
     <div className='bg-lime rounded-2xl dark:bg-transparent'>
     <div className="max-w-4xl mx-auto px-4 py-8 text-lime-400">
-  <div className="dark:bg-gray-900 bg-white rounded-2xl shadow-lg p-6 animate-slide-in border border-lime ">
+  <div className="dark:bg-darkgray bg-white rounded-2xl shadow-lg p-6 animate-slide-in border border-lime ">
         {/* Profile Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
@@ -55,19 +55,11 @@ export function ProfilePage() {
 
         {/* Profile Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label={<span className="text-darklime dark:text-lime">Username</span>}
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            className="text-white"
-            disabled={!isEditing}
-          />
+          
           <Input
             label={<span className="text-darklime dark:text-lime">Email</span>}
             type="email"
-            value={formData.email}
+            value={formData.username}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }

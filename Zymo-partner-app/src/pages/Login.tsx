@@ -37,11 +37,11 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 font-montserrat flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-darkgray font-montserrat flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="bg-lime p-3 rounded-full">
-            <Car className="h-12 w-12 text-gray-800" />
+            <Car className="h-12 w-12 text-lightgray" />
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-lime">
@@ -53,7 +53,7 @@ export function Login() {
       </div>
 
       <div className="mt-8 max-w-md w-full">
-        <div className="bg-gray-900 py-8 px-4 rounded-2xl border border-lime text-white">
+        <div className="bg-darkgray py-8 px-4 rounded-2xl border border-lime text-white">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">

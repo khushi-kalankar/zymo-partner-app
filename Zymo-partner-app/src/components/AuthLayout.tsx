@@ -13,7 +13,7 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
         <div className="flex justify-center">
           <Car className="h-12 w-12 text-yellow-400" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{title}</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-darkgray">{title}</h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

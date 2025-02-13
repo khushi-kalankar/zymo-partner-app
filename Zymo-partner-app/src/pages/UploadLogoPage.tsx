@@ -51,7 +51,7 @@ export function UploadLogoPage() {
 
     
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <div className="bg-white dark:bg-gray-900 border border-lime rounded-3xl shadow-lg p-6">
+      <div className="bg-white dark:bg-darkgray border border-lime rounded-3xl shadow-lg p-6">
         <div className="flex items-center space-x-4 mb-8">
           <div className="bg-lime p-3 rounded-full">
             <ImageIcon className="h-6 w-6 text-darklime" />
