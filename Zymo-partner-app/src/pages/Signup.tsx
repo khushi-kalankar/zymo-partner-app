@@ -94,17 +94,22 @@ export function Signup() {
     const inputRef = useRef<HTMLInputElement>(null); // Reference for input
   
     useEffect(() => {
-      async function fetchCities() {
-          try {
-              const response = await fetch("http://localhost:3000/zoomcar/cities");
-              const data = await response.json();
-              setCities(data.cities || []);
-          } catch (error) {
-              console.error("Error fetching cities:", error);
-          }
-      }
-      fetchCities();
-  }, []);
+      async function fetchCities(query = "New") {  // Default query to get initial results
+        try {
+            const response = await fetch(`http://localhost:3000/indian-cities?query=${query}`);
+            const data = await response.json();
+            const cityNames = data.cities.map(city => city.split(",")[0].trim());
+
+            setCities(cityNames || []);
+        } catch (error) {
+            console.error("Error fetching cities:", error);
+        }
+    }
+
+    if (searchTerm.length > 1) {
+        fetchCities(searchTerm);  // Fetch when typing
+    }
+}, [searchTerm]);
 
   
   const handleSelectChange = (city) => {
