@@ -108,7 +108,6 @@ export function Signup() {
     const inputRef = useRef<HTMLInputElement>(null); // Reference for input
 
     useEffect(() => {
-<<<<<<< HEAD:Zymo-partner-app/src/pages/Signup.tsx
       async function fetchCities(query = "New") {  // Default query to get initial results
         try {
             const response = await fetch(`http://localhost:3000/indian-cities?query=${query}`);
@@ -125,21 +124,6 @@ export function Signup() {
         fetchCities(searchTerm);  // Fetch when typing
     }
 }, [searchTerm]);
-=======
-        async function fetchCities() {
-            try {
-                const response = await fetch(
-                    "http://localhost:3000/zoomcar/cities"
-                );
-                const data = await response.json();
-                setCities(data.cities || []);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
-        }
-        fetchCities();
-    }, []);
->>>>>>> dc468629533efd33c70f13f7813bb7124c6eee5d:src/pages/Signup.tsx
 
     const handleSelectChange = (city: string) => {
         const newCities = formData.cities.includes(city)
