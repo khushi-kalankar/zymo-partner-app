@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { Car, Check } from "lucide-react";
 import { auth, db } from "../lib/firebase";
 import { Input } from "../components/Input";
@@ -108,19 +108,22 @@ export function Signup() {
     const inputRef = useRef<HTMLInputElement>(null); // Reference for input
 
     useEffect(() => {
-        async function fetchCities() {
-            try {
-                const response = await fetch(
-                    "http://localhost:3000/zoomcar/cities"
-                );
-                const data = await response.json();
-                setCities(data.cities || []);
-            } catch (error) {
-                console.error("Error fetching cities:", error);
-            }
+      async function fetchCities(query = "New") {  // Default query to get initial results
+        try {
+            const response = await fetch(`http://localhost:3000/indian-cities?query=${query}`);
+            const data = await response.json();
+            const cityNames = data.cities.map(city => city.split(",")[0].trim());
+
+            setCities(cityNames || []);
+        } catch (error) {
+            console.error("Error fetching cities:", error);
         }
-        fetchCities();
-    }, []);
+    }
+
+    if (searchTerm.length > 1) {
+        fetchCities(searchTerm);  // Fetch when typing
+    }
+}, [searchTerm]);
 
     const handleSelectChange = (city: string) => {
         const newCities = formData.cities.includes(city)
@@ -474,13 +477,16 @@ export function Signup() {
         setError(null);
 
         try {
+            console.log("Fromdata: ", formData);
             const { user } = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,
                 formData.password
             );
 
-            await setDoc(doc(db, "partnerWebApp", "Profiles", user.uid), {
+            console.log("Created", user);
+            const userRef = doc(db, "partnerWebApp", user.uid);
+            await setDoc(userRef, {
                 username: formData.email,
                 accountType: formData.accountType,
                 fullName: formData.fullName,
@@ -497,6 +503,7 @@ export function Signup() {
             navigate("/home");
         } catch (err) {
             setError("Failed to create account. Please try again.");
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
