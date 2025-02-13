@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs } from "firebase/firestore";
 import { db, auth } from "../lib/firebase";
 import { Button } from "../components/Button";
 import { Plus } from "lucide-react";
@@ -37,8 +37,8 @@ export function Home() {
         const carsCollection = collection(
             db,
             "partnerWebApp",
-            "Cars",
-            user.uid
+            user.uid,
+            "uploadedCars"
         );
         const carsSnapshot = await getDocs(carsCollection);
         const carsData = carsSnapshot.docs.map((doc) => ({

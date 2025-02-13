@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { Car, Check } from "lucide-react";
 import { auth, db } from "../lib/firebase";
 import { Input } from "../components/Input";
@@ -474,13 +474,16 @@ export function Signup() {
         setError(null);
 
         try {
+            console.log("Fromdata: ", formData);
             const { user } = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,
                 formData.password
             );
 
-            await setDoc(doc(db, "partnerWebApp", "Profiles", user.uid), {
+            console.log("Created", user);
+            const userRef = doc(db, "partnerWebApp", user.uid);
+            await setDoc(userRef, {
                 username: formData.email,
                 accountType: formData.accountType,
                 fullName: formData.fullName,
@@ -497,6 +500,7 @@ export function Signup() {
             navigate("/home");
         } catch (err) {
             setError("Failed to create account. Please try again.");
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
