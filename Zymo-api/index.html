@@ -10,12 +10,11 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <button onclick="apiTest()">
-        Get cars in bangalore
-    </button>
-    <button onclick="getcities()">
-        Get cities
-    </button>
+   
+
+    <h1>Search Indian Cities</h1>
+    <input type="text" id="city-input" placeholder="Type a city name..." oninput="fetchCities()" />
+    <ul id="cities-list"></ul>
 
     <div class="content">
         <h2 class="header"></h2>
