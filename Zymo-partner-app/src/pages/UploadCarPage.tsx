@@ -72,6 +72,15 @@ export function UploadCarPage() {
         },
     });
 
+    const user = auth.currentUser;
+    const userId = uid || user?.uid;
+
+if (!userId) {
+  setError("User ID is missing. Please log in again.");
+  setIsSubmitting(false);
+  return;
+}
+
     const { getRootProps, getInputProps } = useDropzone({
         accept: {
             "image/*": [".jpeg", ".jpg", ".png", ".gif"],
@@ -130,6 +139,15 @@ export function UploadCarPage() {
         setError(null);
 
         try {
+            const user = auth.currentUser;
+            const uid = user ? user.uid : null;
+
+        if (!uid) {
+            console.error("User is not logged in. Cannot upload car details.");
+            setError("Authentication error. Please log in again.");
+            setIsSubmitting(false);
+            return;
+        }
             const storage = getStorage();
 
             // Upload images and get URLs
