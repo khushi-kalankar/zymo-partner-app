@@ -7,6 +7,9 @@ import { auth, db } from "../lib/firebase";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { AccountType } from "../types/auth";
+import { fetchProfile } from "../store/slices/profileSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
 
 const CARS_RANGES = ["0-5", "5-10", "10-20", "20-50", "50-100", "100+"];
 
@@ -82,6 +85,7 @@ function Step({
 }
 
 export function Signup() {
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -499,6 +503,9 @@ export function Signup() {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             });
+            setTimeout(() => {
+                dispatch(fetchProfile());
+            }, 1000); // Small delay to allow Firestore update
 
             navigate("/home");
         } catch (err) {
