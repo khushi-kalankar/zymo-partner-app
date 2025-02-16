@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+Zymo-partner-app\.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
