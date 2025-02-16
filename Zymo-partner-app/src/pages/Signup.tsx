@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { Car, Check } from "lucide-react";
 import { auth, db } from "../lib/firebase";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 import { AccountType } from "../types/auth";
+import { fetchProfile } from "../store/slices/profileSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
 
 const CARS_RANGES = ["0-5", "5-10", "10-20", "20-50", "50-100", "100+"];
 
@@ -82,6 +85,7 @@ function Step({
 }
 
 export function Signup() {
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -477,13 +481,16 @@ export function Signup() {
         setError(null);
 
         try {
+            console.log("Fromdata: ", formData);
             const { user } = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,
                 formData.password
             );
 
-            await setDoc(doc(db, "partnerWebApp", "Profiles", user.uid), {
+            console.log("Created", user);
+            const userRef = doc(db, "partnerWebApp", user.uid);
+            await setDoc(userRef, {
                 username: formData.email,
                 accountType: formData.accountType,
                 fullName: formData.fullName,
@@ -496,10 +503,14 @@ export function Signup() {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             });
+            setTimeout(() => {
+                dispatch(fetchProfile());
+            }, 1000); // Small delay to allow Firestore update
 
             navigate("/home");
         } catch (err) {
             setError("Failed to create account. Please try again.");
+            console.error(err);
         } finally {
             setIsLoading(false);
         }

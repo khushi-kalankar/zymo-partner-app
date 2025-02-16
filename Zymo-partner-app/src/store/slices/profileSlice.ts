@@ -9,7 +9,7 @@ interface Profile {
   phone: string;
   gstNumber: string;
   bankAccountName: string;
-  bankAccountNumber: string;
+  bankAccount: string;
   ifscCode: string;
   cities: string[];
   loading: boolean;
@@ -23,7 +23,7 @@ const initialState: Profile = {
   phone: '',
   gstNumber: '',
   bankAccountName: '',
-  bankAccountNumber: '',
+  bankAccount: '',
   ifscCode: '',
   cities: [],
   loading: false,
@@ -34,7 +34,7 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async () => {
     if (!auth.currentUser) throw new Error('No authenticated user');
-    const docRef = doc(db, 'profiles', auth.currentUser.uid);
+    const docRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) throw new Error('Profile not found');
     return docSnap.data() as Profile;

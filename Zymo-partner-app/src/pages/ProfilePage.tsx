@@ -16,7 +16,9 @@ export function ProfilePage() {
   }, [dispatch]);
 
   useEffect(() => {
-    setFormData(profile);
+    if (profile && !profile.loading) {
+      setFormData(profile);
+    }
   }, [profile]);
 
   const handleSave = async () => {
@@ -105,9 +107,9 @@ export function ProfilePage() {
           />
           <Input
             label={<span className="text-darklime dark:text-lime">Bank Account Number</span>}
-            value={formData.bankAccountNumber}
+            value={formData.bankAccount}
             onChange={(e) =>
-              setFormData({ ...formData, bankAccountNumber: e.target.value })
+              setFormData({ ...formData, bankAccount: e.target.value })
             }
             className="text-white"
             disabled={!isEditing}
