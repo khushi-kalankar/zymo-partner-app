@@ -1,6 +1,6 @@
 
 function getcities() {
-    const url = "http://localhost:3000/zoomcar/cities";
+    const url = "https://zymo-partner-app-theta.vercel.app/zoomcar/cities";
     fetch(url, {
         method: "GET",
         headers: {
@@ -17,7 +17,7 @@ async function fetchCities() {
     const query = document.getElementById("city-input").value.trim();
     if (query.length < 2) return; // Fetch only when at least 2 characters are typed
 
-    const apiUrl = `http://localhost:3000/indian-cities?query=${query}`; // Pass query to backend
+    const apiUrl = `https://zymo-partner-app-theta.vercel.app/indian-cities?query=${query}`; // Pass query to backend
 
     try {
         const response = await fetch(apiUrl);
