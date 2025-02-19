@@ -114,7 +114,7 @@ export function Signup() {
     useEffect(() => {
       async function fetchCities(query = "New") {  // Default query to get initial results
         try {
-            const response = await fetch(`http://localhost:3000/indian-cities?query=${query}`);
+            const response = await fetch(`https://zymo-partner-app-theta.vercel.app/indian-cities?query=${query}`);
             const data = await response.json();
             const cityNames = data.cities.map(city => city.split(",")[0].trim());
 
