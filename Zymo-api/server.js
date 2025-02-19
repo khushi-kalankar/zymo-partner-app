@@ -17,11 +17,6 @@ app.use(express.json());
 
 // Zoom credentials
 const prod = process.env.PROD === "true";
-const zoomApiKey = prod ? process.env.ZOOM_API_KEY_PROD : process.env.ZOOM_API_KEY_DEV;
-const zoomApiUrl = prod ? process.env.ZOOM_API_URL_PROD : process.env.ZOOM_API_URL_DEV;
-const apiVer = "v2/";
-const zoomId = prod ? process.env.ZOOM_ID_PROD : process.env.ZOOM_ID_DEV;
-const zoomPass = prod ? process.env.ZOOM_PASS_PROD : process.env.ZOOM_PASS_DEV;
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 app.get("/indian-cities", async (req, res) => {
@@ -41,25 +36,6 @@ app.get("/indian-cities", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch cities" });
     }
 });
-
-async function getZoomToken() {
-    const zoomTokenUrl = `${zoomApiUrl}authenticate/token`;
-    const basicAuth = `Basic ${Buffer.from(
-        `${zoomId}:${zoomPass}`
-    ).toString("base64")}`;
-    const body = {
-        grant_type: "client_credentials",
-    };
-    const headers = {
-        authorization: basicAuth,
-        "Content-Type": "application/json",
-    };
-
-    const response = await axios.post(zoomTokenUrl, body, { headers });
-    return response.data.access_token;
-}
-
-
 
 app.listen(port, () => {
     console.log(`Proxy server running at http://localhost:${port}`);
