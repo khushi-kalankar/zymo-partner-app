@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../lib/firebase';
 
 interface Profile {
@@ -12,6 +12,7 @@ interface Profile {
   bankAccount: string;
   ifscCode: string;
   cities: string[];
+  logo: '',
   loading: boolean;
   error: string | null;
 }
@@ -26,6 +27,7 @@ const initialState: Profile = {
   bankAccount: '',
   ifscCode: '',
   cities: [],
+  logo: '',
   loading: false,
   error: null,
 };
@@ -34,7 +36,7 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async () => {
     if (!auth.currentUser) throw new Error('No authenticated user');
-    const docRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
+    const docRef = doc(db, 'profiles', auth.currentUser.uid);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) throw new Error('Profile not found');
     return docSnap.data() as Profile;
@@ -46,7 +48,7 @@ export const updateProfile = createAsyncThunk(
   async (profile: Partial<Profile>) => {
     if (!auth.currentUser) throw new Error('No authenticated user');
     const docRef = doc(db, 'profiles', auth.currentUser.uid);
-    await updateDoc(docRef, profile);
+    await setDoc(docRef, profile, {merge: true});
     return profile;
   }
 );

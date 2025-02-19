@@ -29,7 +29,7 @@ export function ProfilePage() {
   if (profile.loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lime-400"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-lime"></div>
       </div>
     );
   }
@@ -123,7 +123,21 @@ export function ProfilePage() {
             className="text-white"
             disabled={!isEditing}
           />
+          <div>
+          <div className='my-4 mx-1 text-darklime dark:text-lime '>
+          Logo
+          {profile.logo ? (
+    <img src={profile.logo} alt="Brand Logo" className="w-32 h-32 object-cover rounded-lg mt-2" />
+  ) : (
+    <p className="text-gray-400">No logo uploaded</p>
+  )}
         </div>
+
+          </div>
+          
+        </div>
+
+        
 
         {/* Cities Operated Section */}
         <div className="mt-6">
