@@ -7,7 +7,7 @@ import { Car as CarIcon, Upload, X } from "lucide-react";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 //import { AppDispatch } from '../store/store';
-import { collection, addDoc, setDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase"; // Import Firebase Firestore instance
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -694,7 +694,7 @@ if (!userId) {
                                         className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
                                     />
                                     <label className="text-sm font-medium dark:text-white text-gray-700">
-                                        Monthly Rental Prices ( 30 Days )
+                                        Monthly Rental Prices ( 30 Days ) <b className=" text-red-500"> (including GST & Zymo Commission)</b> 
                                     </label>
                                 </div>
 
@@ -847,7 +847,7 @@ if (!userId) {
                                         className="rounded border-gray-300 text-yellow-400 focus:ring-yellow-500"
                                     />
                                     <label className="text-sm font-medium dark:text-white text-gray-700">
-                                        Weekly Rental Prices ( 7 days )
+                                        Weekly Rental Prices ( 7 days ) <b className=" text-red-500"> (including GST & Zymo Commission)</b>
                                     </label>
                                 </div>
 
@@ -1001,7 +1001,7 @@ if (!userId) {
                                         className="rounded border-gray-300 "
                                     />
                                     <label className="text-sm font-medium dark:text-white text-gray-700">
-                                        Home Delivery/Pickup Prices
+                                        Home Delivery/Pickup Prices <b className=" text-red-500"> (including GST & Zymo Commission)</b>
                                     </label>
                                 </div>
 
