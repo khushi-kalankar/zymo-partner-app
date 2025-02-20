@@ -12,6 +12,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase"; // Import Firebase Firestore instance
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PickupForm from "../components/PickupForm";
+import { div } from "framer-motion/client";
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
@@ -37,37 +38,37 @@ export function UploadCarPage() {
         name: "",
         cities: [] as string[],
         pickupLocation: "",
-        securityDeposit: 0,
+        securityDeposit: "",
         yearOfRegistration: new Date().getFullYear(),
         fuelType: FUEL_TYPES[0],
         carType: CAR_TYPES[0],
         transmissionType: TRANSMISSION_TYPES[0],
         minBookingDuration: 1,
         unit: "hours",
-        kmRate: 0,
-        extraHourRate: 0,
+        kmRate: "",
+        extraHourRate: "",
         packages: [] as Package[],
         monthlyRental: {
             available: false,
-            rate: 0,
+            rate: "",
             limit: "Limit type" as "Limit Type" | "Unlimited" | "Limited",
-            limitValueKm: 0,
-            limitValueHr: 0,
+            limitValueKm: "",
+            limitValueHr: "",
         },
         weeklyRental: {
             available: false,
-            rate: 0,
+            rate: "",
             limit: "Limit Type" as "Limit Type" | "Unlimited" | "Limited",
-            limitValueKm: 0,
-            limitValueHr: 0,
+            limitValueKm: "",
+            limitValueHr: "",
         },
         deliveryCharges: {
             enabled: false,
-            Range: 0,
+            Range: "",
             charges: {
-                "0-10": 0,
-                "10-25": 0,
-                "25-50": 0,
+                "0-10": "",
+                "10-25": "",
+                "25-50": "",
             },
         },
     });
@@ -426,13 +427,13 @@ if (!userId) {
                             </div>
                             <Input
                                 label="Security Deposit"
-                                type="number"
+                                type="text"
                                 required
                                 value={formData.securityDeposit}
                                 onChange={(e) =>
                                     setFormData({
                                         ...formData,
-                                        securityDeposit: e.target.valueAsNumber,
+                                        securityDeposit: e.target.value,
                                     })
                                 }
                             />
@@ -508,7 +509,7 @@ if (!userId) {
                                                 carType: e.target.value,
                                             })
                                         }
-                                        className="mt-1 block w-full border border-lightgray rounded-2xl p-2 dark:bg-lightgray dark:text-white  shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
+                                        className="mt-1 block w-full border border-lightgray rounded-2xl p-2 dark:bg-lightgray dark:text-white  shadow-sm focus:border-lime focus:ring-lime"
                                     >
                                         {CAR_TYPES.map((type) => (
                                             <option key={type} value={type}>
@@ -546,7 +547,7 @@ if (!userId) {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
                                     label="Minimum Booking Duration (hrs / days)"
-                                    type="number"
+                                    type="text"
                                     min="1"
                                     required
                                     value={formData.minBookingDuration}
@@ -554,7 +555,7 @@ if (!userId) {
                                         setFormData({
                                             ...formData,
                                             minBookingDuration:
-                                                e.target.valueAsNumber,
+                                                e.target.value,
                                         })
                                     }
                                 />
@@ -645,7 +646,7 @@ if (!userId) {
 
                                         <Input
                                             label=""
-                                            type="number"
+                                            type="text"
                                             min="0"
                                             step="0.01"
                                             value={pkg.price}
@@ -702,7 +703,7 @@ if (!userId) {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
                                         <Input
                                             label="Monthly Rate"
-                                            type="number"
+                                            type="text"
                                             min="0"
                                             required
                                             value={formData.monthlyRental.rate}
@@ -712,7 +713,7 @@ if (!userId) {
                                                     monthlyRental: {
                                                         ...formData.monthlyRental,
                                                         rate: e.target
-                                                            .valueAsNumber,
+                                                            .value,
                                                     },
                                                 })
                                             }
@@ -758,7 +759,7 @@ if (!userId) {
                                             <div>
                                                 <Input
                                                     label="Extra Km Rate"
-                                                    type="number"
+                                                    type="text"
                                                     min="0"
                                                     required
                                                     value={
@@ -772,14 +773,14 @@ if (!userId) {
                                                                 ...formData.monthlyRental,
                                                                 limitValueKm:
                                                                     e.target
-                                                                        .valueAsNumber,
+                                                                        .value,
                                                             },
                                                         })
                                                     }
                                                 />
                                                 <Input
                                                     label="Extra Hr Rate"
-                                                    type="number"
+                                                    type="text"
                                                     min="0"
                                                     required
                                                     value={
@@ -793,7 +794,7 @@ if (!userId) {
                                                                 ...formData.monthlyRental,
                                                                 limitValueHr:
                                                                     e.target
-                                                                        .valueAsNumber,
+                                                                        .value,
                                                             },
                                                         })
                                                     }
@@ -804,7 +805,7 @@ if (!userId) {
                                             "Unlimited" && (
                                             <Input
                                                 label="Extra Hr rate"
-                                                type="number"
+                                                type="text"
                                                 min="0"
                                                 required
                                                 value={
@@ -818,7 +819,7 @@ if (!userId) {
                                                             ...formData.monthlyRental,
                                                             limitValueHr:
                                                                 e.target
-                                                                    .valueAsNumber,
+                                                                    .value,
                                                         },
                                                     })
                                                 }
@@ -855,7 +856,7 @@ if (!userId) {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
                                         <Input
                                             label="Weekly Rental Prices"
-                                            type="number"
+                                            type="text"
                                             min="0"
                                             required
                                             value={formData.weeklyRental.rate}
@@ -865,7 +866,7 @@ if (!userId) {
                                                     weeklyRental: {
                                                         ...formData.weeklyRental,
                                                         rate: e.target
-                                                            .valueAsNumber,
+                                                            .value,
                                                     },
                                                 })
                                             }
@@ -911,7 +912,7 @@ if (!userId) {
                                             <div>
                                                 <Input
                                                     label="Extra Km rate"
-                                                    type="number"
+                                                    type="text"
                                                     min="0"
                                                     required
                                                     value={
@@ -925,14 +926,14 @@ if (!userId) {
                                                                 ...formData.weeklyRental,
                                                                 limitValueKm:
                                                                     e.target
-                                                                        .valueAsNumber,
+                                                                        .value,
                                                             },
                                                         })
                                                     }
                                                 />
                                                 <Input
                                                     label="Extra Hr rate"
-                                                    type="number"
+                                                    type="text"
                                                     min="0"
                                                     required
                                                     value={
@@ -946,7 +947,7 @@ if (!userId) {
                                                                 ...formData.weeklyRental,
                                                                 limitValueHr:
                                                                     e.target
-                                                                        .valueAsNumber,
+                                                                        .value,
                                                             },
                                                         })
                                                     }
@@ -957,7 +958,7 @@ if (!userId) {
                                             "Unlimited" && (
                                             <Input
                                                 label="Extra Hr Rate"
-                                                type="number"
+                                                type="text"
                                                 min="0"
                                                 required
                                                 value={
@@ -971,7 +972,7 @@ if (!userId) {
                                                             ...formData.weeklyRental,
                                                             limitValueHr:
                                                                 e.target
-                                                                    .valueAsNumber,
+                                                                    .value,
                                                         },
                                                     })
                                                 }
@@ -1006,10 +1007,13 @@ if (!userId) {
                                 </div>
 
                                 {formData.deliveryCharges.enabled && (
+                                    <div>
+                                     <div className="m-2 dark:text-gray-400">Specify the home delivery charges for different distance ranges.
+                                        </div>   
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
                                         <Input
                                             label="0-10 km"
-                                            type="number"
+                                            type="text"
                                             min=""
                                             required
                                             value={
@@ -1026,7 +1030,7 @@ if (!userId) {
                                                                 .deliveryCharges
                                                                 .charges,
                                                             "0-10": e.target
-                                                                .valueAsNumber,
+                                                                .value,
                                                         },
                                                     },
                                                 })
@@ -1035,7 +1039,7 @@ if (!userId) {
 
                                         <Input
                                             label="10-25 km"
-                                            type="number"
+                                            type="text"
                                             min="0"
                                             required
                                             value={
@@ -1053,7 +1057,7 @@ if (!userId) {
                                                                 .charges,
                                                             "10-25":
                                                                 e.target
-                                                                    .valueAsNumber,
+                                                                    .value,
                                                         },
                                                     },
                                                 })
@@ -1062,7 +1066,7 @@ if (!userId) {
 
                                         <Input
                                             label="25-50 km"
-                                            type="number"
+                                            type="text"
                                             min="0"
                                             required
                                             value={
@@ -1080,12 +1084,13 @@ if (!userId) {
                                                                 .charges,
                                                             "25-50":
                                                                 e.target
-                                                                    .valueAsNumber,
+                                                                    .value,
                                                         },
                                                     },
                                                 })
                                             }
                                         />
+                                    </div>
                                     </div>
                                 )}
                             </div>
