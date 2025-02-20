@@ -2,17 +2,22 @@ import { useNavigate } from 'react-router-dom';
 import { User, Image, LogOut, Car, X } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
+import { useDispatch } from 'react-redux';
+import { resetProfile } from '../store/slices/profileSlice';
 
 interface DashboardProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+
 export function Dashboard({ isOpen, onClose }: DashboardProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
+      dispatch(resetProfile());
       await signOut(auth);
       navigate('/auth');
     } catch (error) {
