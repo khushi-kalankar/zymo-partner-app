@@ -36,7 +36,7 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async () => {
     if (!auth.currentUser) throw new Error('No authenticated user');
-    const docRef = doc(db, 'profiles', auth.currentUser.uid);
+    const docRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) throw new Error('Profile not found');
     return docSnap.data() as Profile;
@@ -47,7 +47,7 @@ export const updateProfile = createAsyncThunk(
   'profile/updateProfile',
   async (profile: Partial<Profile>) => {
     if (!auth.currentUser) throw new Error('No authenticated user');
-    const docRef = doc(db, 'profiles', auth.currentUser.uid);
+    const docRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
     await setDoc(docRef, profile, {merge: true});
     return profile;
   }

@@ -16,7 +16,7 @@ export function UploadLogoPage() {
       if (!auth.currentUser) return;
 
       try {
-        const userRef = doc(db, 'profiles', auth.currentUser.uid);
+        const userRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
         const userDoc = await getDoc(userRef);
 
         if (userDoc.exists()) {
@@ -43,7 +43,7 @@ export function UploadLogoPage() {
     setError(null);
 
     try {
-      const userRef = doc(db, 'profiles', auth.currentUser.uid);
+      const userRef = doc(db, 'partnerWebApp', auth.currentUser.uid);
       const userDoc = await getDoc(userRef);
 
       if (!userDoc.exists()) {
