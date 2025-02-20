@@ -58,9 +58,6 @@ export function UploadLogoPage() {
 
       await updateDoc(userRef, { logo: downloadURL });
       setLogo(downloadURL); // Update state so it reflects immediately
-    } catch (err) {
-      console.error('Upload Error:', err);
-      setError(`Failed to upload logo: ${err.message || err}`);
     } finally {
       setIsUploading(false);
     }
