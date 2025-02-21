@@ -12,7 +12,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase"; // Import Firebase Firestore instance
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PickupForm from "../components/PickupForm";
-import { div } from "framer-motion/client";
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
@@ -47,6 +46,8 @@ export function UploadCarPage() {
         unit: "hours",
         kmRate: "",
         extraHourRate: "",
+        noOfSeats: 4, // Default value for number of seats
+        hourlyRate: "", // Hourly rate in rupees
         packages: [] as Package[],
         monthlyRental: {
             available: false,
@@ -72,7 +73,6 @@ export function UploadCarPage() {
             },
         },
     });
-
     const user = auth.currentUser;
     const userId = uid || user?.uid;
 
@@ -273,7 +273,7 @@ if (!userId) {
                                 label="Car Name"
                                 required
                                 value={formData.name}
-                                onChange={(e) =>
+                                onChange={(e: { target: { value: any; }; }) =>
                                     setFormData({
                                         ...formData,
                                         name: e.target.value,
@@ -430,7 +430,7 @@ if (!userId) {
                                 type="text"
                                 required
                                 value={formData.securityDeposit}
-                                onChange={(e) =>
+                                onChange={(e: { target: { value: any; }; }) =>
                                     setFormData({
                                         ...formData,
                                         securityDeposit: e.target.value,
@@ -551,7 +551,7 @@ if (!userId) {
                                     min="1"
                                     required
                                     value={formData.minBookingDuration}
-                                    onChange={(e) =>
+                                    onChange={(e: { target: { value: any; }; }) =>
                                         setFormData({
                                             ...formData,
                                             minBookingDuration:
@@ -597,6 +597,44 @@ if (!userId) {
                                         Days
                                     </label>
                                 </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* Number of Seats */}
+    <div>
+        <label className="block mx-1 text-sm font-medium text-gray-700 mb-3 dark:text-white">
+            Number of Seats
+        </label>
+        <select
+            value={formData.noOfSeats}
+            onChange={(e) =>
+                setFormData({
+                    ...formData,
+                    noOfSeats: Number(e.target.value),
+                })
+            }
+            className="mt-1 block w-full border border-lightgray rounded-2xl p-2 dark:bg-lightgray dark:text-white shadow-sm focus:border-lime focus:ring-lime"
+        >
+            {[3, 4, 5, 6, 7, 8, 9].map((seats) => (
+                <option key={seats} value={seats}>
+                    {seats}
+                </option>
+            ))}
+        </select>
+    </div>
+
+    {/* Hourly Rate */}
+    <Input
+        label="Hourly Rate ( ₹/hr )"
+        type="text"
+        required
+        value={formData.hourlyRate}
+        onChange={(e: { target: { value: any; }; }) =>
+            setFormData({
+                ...formData,
+                hourlyRate: e.target.value,
+            })
+        }
+    />
+</div>
                             </div>
 
                             <p className=" m-1 text-gray-600 dark:text-gray-300 mt-2">
@@ -650,7 +688,7 @@ if (!userId) {
                                             min="0"
                                             step="0.01"
                                             value={pkg.price}
-                                            onChange={(e) => {
+                                            onChange={(e: { target: { value: any; }; }) => {
                                                 const newPackages = [
                                                     ...formData.packages,
                                                 ];
@@ -707,7 +745,7 @@ if (!userId) {
                                             min="0"
                                             required
                                             value={formData.monthlyRental.rate}
-                                            onChange={(e) =>
+                                            onChange={(e: { target: { value: any; }; }) =>
                                                 setFormData({
                                                     ...formData,
                                                     monthlyRental: {
@@ -766,7 +804,7 @@ if (!userId) {
                                                         formData.monthlyRental
                                                             .limitValueKm
                                                     }
-                                                    onChange={(e) =>
+                                                    onChange={(e: { target: { value: any; }; }) =>
                                                         setFormData({
                                                             ...formData,
                                                             monthlyRental: {
@@ -787,7 +825,7 @@ if (!userId) {
                                                         formData.monthlyRental
                                                             .limitValueHr
                                                     }
-                                                    onChange={(e) =>
+                                                    onChange={(e: { target: { value: any; }; }) =>
                                                         setFormData({
                                                             ...formData,
                                                             monthlyRental: {
@@ -812,7 +850,7 @@ if (!userId) {
                                                     formData.monthlyRental
                                                         .limitValueHr
                                                 }
-                                                onChange={(e) =>
+                                                onChange={(e: { target: { value: any; }; }) =>
                                                     setFormData({
                                                         ...formData,
                                                         monthlyRental: {
@@ -860,7 +898,7 @@ if (!userId) {
                                             min="0"
                                             required
                                             value={formData.weeklyRental.rate}
-                                            onChange={(e) =>
+                                            onChange={(e: { target: { value: any; }; }) =>
                                                 setFormData({
                                                     ...formData,
                                                     weeklyRental: {
@@ -919,7 +957,7 @@ if (!userId) {
                                                         formData.weeklyRental
                                                             .limitValueKm
                                                     }
-                                                    onChange={(e) =>
+                                                    onChange={(e: { target: { value: any; }; }) =>
                                                         setFormData({
                                                             ...formData,
                                                             weeklyRental: {
@@ -940,7 +978,7 @@ if (!userId) {
                                                         formData.weeklyRental
                                                             .limitValueHr
                                                     }
-                                                    onChange={(e) =>
+                                                    onChange={(e: { target: { value: any; }; }) =>
                                                         setFormData({
                                                             ...formData,
                                                             weeklyRental: {
@@ -965,7 +1003,7 @@ if (!userId) {
                                                     formData.weeklyRental
                                                         .limitValueHr
                                                 }
-                                                onChange={(e) =>
+                                                onChange={(e: { target: { value: any; }; }) =>
                                                     setFormData({
                                                         ...formData,
                                                         weeklyRental: {
@@ -1020,7 +1058,7 @@ if (!userId) {
                                                 formData.deliveryCharges
                                                     .charges["0-10"]
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e: { target: { value: any; }; }) =>
                                                 setFormData({
                                                     ...formData,
                                                     deliveryCharges: {
@@ -1046,7 +1084,7 @@ if (!userId) {
                                                 formData.deliveryCharges
                                                     .charges["10-25"]
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e: { target: { value: any; }; }) =>
                                                 setFormData({
                                                     ...formData,
                                                     deliveryCharges: {
@@ -1073,7 +1111,7 @@ if (!userId) {
                                                 formData.deliveryCharges
                                                     .charges["25-50"]
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e: { target: { value: any; }; }) =>
                                                 setFormData({
                                                     ...formData,
                                                     deliveryCharges: {
