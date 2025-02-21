@@ -428,6 +428,7 @@ if (!userId) {
                             <Input
                                 label="Security Deposit"
                                 type="text"
+                                prefix="₹"
                                 required
                                 value={formData.securityDeposit}
                                 onChange={(e: { target: { value: any; }; }) =>
@@ -597,7 +598,7 @@ if (!userId) {
                                         Days
                                     </label>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
     {/* Number of Seats */}
     <div>
         <label className="block mx-1 text-sm font-medium text-gray-700 mb-3 dark:text-white">
@@ -626,6 +627,7 @@ if (!userId) {
         label="Hourly Rate ( ₹/hr )"
         type="text"
         required
+        prefix="₹"
         value={formData.hourlyRate}
         onChange={(e: { target: { value: any; }; }) =>
             setFormData({
@@ -685,6 +687,7 @@ if (!userId) {
                                         <Input
                                             label=""
                                             type="text"
+                                            prefix="₹"
                                             min="0"
                                             step="0.01"
                                             value={pkg.price}
@@ -742,6 +745,7 @@ if (!userId) {
                                         <Input
                                             label="Monthly Rate"
                                             type="text"
+                                            prefix="₹"
                                             min="0"
                                             required
                                             value={formData.monthlyRental.rate}
@@ -799,6 +803,7 @@ if (!userId) {
                                                     label="Extra Km Rate"
                                                     type="text"
                                                     min="0"
+                                                    prefix="₹"
                                                     required
                                                     value={
                                                         formData.monthlyRental
@@ -820,6 +825,7 @@ if (!userId) {
                                                     label="Extra Hr Rate"
                                                     type="text"
                                                     min="0"
+                                                    prefix="₹"
                                                     required
                                                     value={
                                                         formData.monthlyRental
@@ -845,6 +851,7 @@ if (!userId) {
                                                 label="Extra Hr rate"
                                                 type="text"
                                                 min="0"
+                                                prefix="₹"
                                                 required
                                                 value={
                                                     formData.monthlyRental
@@ -896,6 +903,7 @@ if (!userId) {
                                             label="Weekly Rental Prices"
                                             type="text"
                                             min="0"
+                                            prefix="₹"
                                             required
                                             value={formData.weeklyRental.rate}
                                             onChange={(e: { target: { value: any; }; }) =>
@@ -952,6 +960,7 @@ if (!userId) {
                                                     label="Extra Km rate"
                                                     type="text"
                                                     min="0"
+                                                    prefix="₹"
                                                     required
                                                     value={
                                                         formData.weeklyRental
@@ -973,6 +982,7 @@ if (!userId) {
                                                     label="Extra Hr rate"
                                                     type="text"
                                                     min="0"
+                                                    prefix="₹"
                                                     required
                                                     value={
                                                         formData.weeklyRental
@@ -998,6 +1008,7 @@ if (!userId) {
                                                 label="Extra Hr Rate"
                                                 type="text"
                                                 min="0"
+                                                prefix="₹"
                                                 required
                                                 value={
                                                     formData.weeklyRental
@@ -1053,6 +1064,7 @@ if (!userId) {
                                             label="0-10 km"
                                             type="text"
                                             min=""
+                                            prefix="₹"
                                             required
                                             value={
                                                 formData.deliveryCharges
@@ -1080,6 +1092,7 @@ if (!userId) {
                                             type="text"
                                             min="0"
                                             required
+                                            prefix="₹"
                                             value={
                                                 formData.deliveryCharges
                                                     .charges["10-25"]
@@ -1106,6 +1119,7 @@ if (!userId) {
                                             label="25-50 km"
                                             type="text"
                                             min="0"
+                                            prefix="₹"
                                             required
                                             value={
                                                 formData.deliveryCharges

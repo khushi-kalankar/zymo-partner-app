@@ -4,7 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db, auth } from "../lib/firebase";
 import { Button } from "../components/Button";
-import { Plus } from "lucide-react";
+import { MapPinIcon, Plus } from "lucide-react";
 
 interface CarListing {
   id: string;
@@ -15,6 +15,7 @@ interface CarListing {
   yearOfRegistration: number;
   fuelType: string;
   carType: string;
+  hourlyRate: number;
   transmissionType: string;
   minBookingDuration: number;
   kmRate: number;
@@ -27,7 +28,7 @@ export function Home() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true); // Added loading state
-
+  const [logo, setLogo] = useState<string | null>(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -42,7 +43,12 @@ export function Home() {
           }
 
           // Fetch cars only after the user is confirmed
-          const carsCollection = collection(db, "partnerWebApp", user.uid, "uploadedCars");
+          const carsCollection = collection(
+            db,
+            "partnerWebApp",
+            user.uid,
+            "uploadedCars"
+          );
           const carsSnapshot = await getDocs(carsCollection);
           const carsData = carsSnapshot.docs.map((doc) => ({
             id: doc.id,
@@ -61,6 +67,28 @@ export function Home() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      if (!auth.currentUser) return;
+
+      try {
+        const userRef = doc(db, "partnerWebApp", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          if (data?.logo) {
+            setLogo(data.logo);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching logo:", err);
+      }
+    };
+
+    fetchLogo();
   }, []);
 
   const handleEditCar = (carId: string) => {
@@ -104,9 +132,22 @@ export function Home() {
                     <h2 className="text-xl font-semibold text-lightgray dark:text-gray-100">
                       {car.name}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <p className="flex gap-1 my-2 text-gray-600 dark:text-gray-300">
+                      <MapPinIcon />
                       {car.cities.join(", ")}
                     </p>
+                    <p className="m-1 text-gray-600 dark:text-white">
+                      Hourly Rate: ₹ {car.hourlyRate}
+                    </p>
+                    {logo && (
+                      <div className="mt-4">
+                        <img
+                          src={logo}
+                          alt="Company Logo"
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
                     <div className="mt-4">
                       <Button
                         onClick={() => handleEditCar(car.id)}

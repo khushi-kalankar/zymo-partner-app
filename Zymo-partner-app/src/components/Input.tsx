@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-export function Input({ label, error, className = '', ...props }: any) {
+export function Input({ label, error, className = "", prefix, ...props }: any) {
   useEffect(() => {
     const preventScroll = (event: WheelEvent) => {
       if (document.activeElement && (document.activeElement as HTMLInputElement).type === "number") {
@@ -20,12 +20,19 @@ export function Input({ label, error, className = '', ...props }: any) {
       <label htmlFor={props.id} className="block px-1 text-sm font-medium dark:text-white">
         {label}
       </label>
-      <input
-        className={`appearance-none block w-full px-3 bg-transparent dark:bg-lightgray py-2 rounded-2xl shadow-sm border border-gray-500 placeholder-gray-400 dark:text-white focus:outline-none focus:ring-lime focus:border-lime sm:text-sm ${
-          error ? 'border-red-300' : ''
-        } ${className}`}
-        {...props}
-      />
+      <div className="relative">
+        {prefix && (
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 dark:text-gray-300">
+            {prefix}
+          </span>
+        )}
+        <input
+          className={`appearance-none block w-full bg-transparent dark:bg-lightgray py-2 rounded-2xl shadow-sm border border-gray-500 placeholder-gray-400 dark:text-white focus:outline-none focus:ring-lime focus:border-lime sm:text-sm ${
+            error ? "border-red-300" : ""
+          } ${prefix ? "pl-8" : "px-3"} ${className}`}
+          {...props}
+        />
+      </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
   );
