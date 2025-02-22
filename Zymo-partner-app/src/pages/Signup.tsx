@@ -207,7 +207,7 @@ export function Signup() {
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({ ...formData, email: e.target.value })
                         }
                     />
@@ -217,7 +217,7 @@ export function Signup() {
                         type="password"
                         required
                         value={formData.password}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({
                                 ...formData,
                                 password: e.target.value,
@@ -230,7 +230,7 @@ export function Signup() {
                         type="password"
                         required
                         value={formData.confirmPassword}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({
                                 ...formData,
                                 confirmPassword: e.target.value,
@@ -255,7 +255,7 @@ export function Signup() {
                         label="Full Name"
                         required
                         value={formData.fullName}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({
                                 ...formData,
                                 fullName: e.target.value,
@@ -268,7 +268,7 @@ export function Signup() {
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({ ...formData, email: e.target.value })
                         }
                     />
@@ -278,7 +278,7 @@ export function Signup() {
                         type="tel"
                         required
                         value={formData.phone}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({ ...formData, phone: e.target.value })
                         }
                     />
@@ -391,7 +391,7 @@ export function Signup() {
                         label="Bank Account Number"
                         required
                         value={formData.bankAccount}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({
                                 ...formData,
                                 bankAccount: e.target.value,
@@ -403,7 +403,7 @@ export function Signup() {
                         label="IFSC Code"
                         required
                         value={formData.ifscCode}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({
                                 ...formData,
                                 ifscCode: e.target.value,
@@ -414,7 +414,7 @@ export function Signup() {
                         id="upiId"
                         label="UPI ID (Optional)"
                         value={formData.upiId}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any; }; }) =>
                             setFormData({ ...formData, upiId: e.target.value })
                         }
                     />
