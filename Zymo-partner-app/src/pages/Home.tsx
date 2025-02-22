@@ -30,9 +30,29 @@ export function Home() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true); // Added loading state
   const [logo, setLogo] = useState<string | null>(null);
+  const [currentIndexes, setCurrentIndexes] = useState<number[]>([]);
 
+  useEffect(() => {
+    setCurrentIndexes(new Array(cars.length).fill(0)); // Set default index for each car
+  }, [cars]); // Update when cars are fetched
 
-  
+  const handlePrevImage = (carIndex: number, imagesLength: number) => {
+    setCurrentIndexes((prevIndexes) => {
+      const newIndexes = [...prevIndexes];
+      newIndexes[carIndex] =
+        (newIndexes[carIndex] - 1 + imagesLength) % imagesLength;
+      return newIndexes;
+    });
+  };
+
+  const handleNextImage = (carIndex: number, imagesLength: number) => {
+    setCurrentIndexes((prevIndexes) => {
+      const newIndexes = [...prevIndexes];
+      newIndexes[carIndex] = (newIndexes[carIndex] + 1) % imagesLength;
+      return newIndexes;
+    });
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -122,53 +142,91 @@ export function Home() {
 
             {/* Car Listings */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {cars.map((car) => (
-                <div
-                  key={car.id}
-                  className="bg-white dark:bg-lightgray rounded-lg shadow-lg overflow-hidden hover:shadow-custom-even hover:shadow-lime transition duration-300 ease-in-out hover:scale-105"
-                >
-                  <img
-                    src={car.images[0] || "default_image_url"}
-                    alt={car.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h2 className="text-xl font-semibold text-lightgray dark:text-gray-100">
-                      {car.name}
-                    </h2>
-                    <p className="flex gap-1 my-2 text-gray-600 dark:text-gray-300">
-                      <MapPinIcon />
-                      {car.cities.join(", ")}
-                    </p>
-                    <p className="m-1 text-gray-600 dark:text-white">
-                      Hourly Rate: ₹ {car.hourlyRate}
-                    </p>
-                    <p className="m-1 dark:text-white">
-                      Car Type: {car.carType}
-                    </p>
-                    <p className="m-1 dark:text-white">
-                      Pickup Location: {car.pickupLocation}
-                    </p>
-                    {logo && (
-                      <div className="">
-                        <img
-                          src={logo}
-                          alt="Company Logo"
-                          className="w-16 h-16 object-contain rounded-lg"
-                        />
-                      </div>
-                    )}
-                    <div className="mt-4">
-                      <Button
-                        onClick={() => handleEditCar(car.id)}
-                        className="bg-lime px-4 py-2 rounded"
+              {cars.map((car, index) => {
+                return (
+                  <div
+                    key={car.id}
+                    className="bg-white dark:bg-lightgray rounded-lg shadow-lg overflow-hidden hover:shadow-custom-even hover:shadow-lime transition duration-300 ease-in-out hover:scale-105"
+                  >
+                    <div className="img-container relative w-full overflow-hidden rounded-2xl">
+                      {/* Backward Button */}
+                      <button
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-25 text-[#faffa4] p-2 rounded-full z-10"
+                        onClick={() =>
+                          handlePrevImage(index, car.images.length)
+                        }
                       >
-                        Edit
-                      </Button>
+                        &#10094; {/* Left arrow */}
+                      </button>
+
+                      {/* Image Scroller */}
+                      <div
+                        className="img-scroller inline-flex transition-transform duration-700 ease-in-out"
+                        style={{
+                          width: `${car.images.length * 100}%`,
+                          transform: `translateX(-${
+                            (currentIndexes[index] * 100) / car.images.length
+                          }%)`,
+                        }}
+                      >
+                        {car.images.map((img, index) => (
+                          <img
+                            key={index}
+                            src={img}
+                            alt={`${car.name} ${index}`}
+                            className="w-full h-48 object-cover"
+                          />
+                        ))}
+                      </div>
+
+                      {/* Forward Button */}
+                      <button
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-25 text-[#faffa4] p-2 rounded-full z-10"
+                        onClick={() =>
+                          handleNextImage(index, car.images.length)
+                        }
+                      >
+                        &#10095; {/* Right arrow */}
+                      </button>
+                    </div>
+                    <div className="p-4">
+                      <h2 className="text-xl font-semibold text-lightgray dark:text-gray-100">
+                        {car.name}
+                      </h2>
+                      <p className="flex gap-1 my-2 text-gray-600 dark:text-gray-300">
+                        <MapPinIcon />
+                        {car.cities.join(", ")}
+                      </p>
+                      <p className="m-1 text-gray-600 dark:text-white">
+                        Hourly Rate: ₹ {car.hourlyRate}
+                      </p>
+                      <p className="m-1 dark:text-white">
+                        Car Type: {car.carType}
+                      </p>
+                      <p className="m-1 dark:text-white">
+                        Pickup Location: {car.pickupLocation}
+                      </p>
+                      {logo && (
+                        <div className="">
+                          <img
+                            src={logo}
+                            alt="Company Logo"
+                            className="w-16 h-16 object-contain rounded-lg"
+                          />
+                        </div>
+                      )}
+                      <div className="mt-4">
+                        <Button
+                          onClick={() => handleEditCar(car.id)}
+                          className="bg-lime px-4 py-2 rounded"
+                        >
+                          Edit
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Upload Car Button */}
