@@ -11,6 +11,7 @@ interface CarListing {
   name: string;
   cities: string[];
   images: string[];
+  pickupLocation: string;
   securityDeposit: number;
   yearOfRegistration: number;
   fuelType: string;
@@ -29,6 +30,9 @@ export function Home() {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true); // Added loading state
   const [logo, setLogo] = useState<string | null>(null);
+
+
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -139,12 +143,18 @@ export function Home() {
                     <p className="m-1 text-gray-600 dark:text-white">
                       Hourly Rate: ₹ {car.hourlyRate}
                     </p>
+                    <p className="m-1 dark:text-white">
+                      Car Type: {car.carType}
+                    </p>
+                    <p className="m-1 dark:text-white">
+                      Pickup Location: {car.pickupLocation}
+                    </p>
                     {logo && (
-                      <div className="mt-4">
+                      <div className="">
                         <img
                           src={logo}
                           alt="Company Logo"
-                          className="w-16 h-16 object-cover rounded-lg"
+                          className="w-16 h-16 object-contain rounded-lg"
                         />
                       </div>
                     )}

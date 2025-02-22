@@ -127,7 +127,7 @@ export function ProfilePage() {
           <div className='my-4 mx-1 text-darklime dark:text-lime '>
           Logo
           {profile.logo ? (
-    <img src={profile.logo} alt="Brand Logo" className="w-32 h-32 object-cover rounded-lg mt-2" />
+    <img src={profile.logo} alt="Brand Logo" className="w-32 h-32 object-contain rounded-lg mt-1" />
   ) : (
     <p className="text-gray-400">No logo uploaded</p>
   )}

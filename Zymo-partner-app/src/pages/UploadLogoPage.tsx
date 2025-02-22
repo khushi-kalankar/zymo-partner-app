@@ -115,7 +115,7 @@ export function UploadLogoPage() {
             <div className="mt-6">
               <h3 className="text-sm font-medium text-gray-700 mb-2">Preview</h3>
               <div className="relative w-32 h-32 rounded-lg overflow-hidden">
-                <img src={logo} alt="Company Logo" className="w-full h-full object-cover" />
+                <img src={logo} alt="Company Logo" className="w-full h-full object-contain" />
               </div>
             </div>
           )}
