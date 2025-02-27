@@ -8,6 +8,7 @@ import { UploadLogoPage } from './pages/UploadLogoPage';
 import { UploadCarPage } from './pages/UploadCarPage';
 import { Layout } from './components/Layout'; 
 import Public from './pages/Public';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
@@ -24,11 +25,13 @@ function App() {
           <Route path="/upload-logo" element={<UploadLogoPage />} />
           <Route path="/upload-car" element={<UploadCarPage />} />
           <Route path="/public" element={<Public />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Route>
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/auth" replace />} />
       </Routes>
+       
     </BrowserRouter>
   );
 }
