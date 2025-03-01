@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 //import { useDispatch } from 'react-redux';
 import { useDropzone } from "react-dropzone";
 import { Car as CarIcon, Upload, X } from "lucide-react";
@@ -7,13 +7,12 @@ import { Car as CarIcon, Upload, X } from "lucide-react";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 //import { AppDispatch } from '../store/store';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc } from "firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase"; // Import Firebase Firestore instance
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PickupForm from "../components/PickupForm";
 import "react-day-picker/dist/style.css";
-import { DayPicker } from "react-day-picker";
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
@@ -28,13 +27,17 @@ export function UploadCarPage() {
   const location = useLocation();
   const { uid } = location.state || {};
   // const dispatch = useDispatch<AppDispatch>();
+  const [searchParams] = useSearchParams();
+  const carId = searchParams.get("carId"); // Extract carId from URL
+  const mode = searchParams.get("mode"); // Extract mode from URL
+  const isEditMode = mode === "edit"; // Check if in edit mode
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [usercities, setUserCities] = useState([]);
-
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     cities: [] as string[],
@@ -78,6 +81,40 @@ export function UploadCarPage() {
   });
 
   useEffect(() => {
+    const fetchCarData = async () => {
+      if (!isEditMode || !carId) return;
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          setError("User not authenticated.");
+          return;
+        }
+
+        const carDocRef = doc(db, "partnerWebApp", user.uid, "uploadedCars", carId);
+        const carDoc = await getDoc(carDocRef);
+
+        if (carDoc.exists()) {
+          const carData = carDoc.data();
+          setFormData(carData as typeof formData);
+
+          // Set image previews if images exist
+          if (carData.images && carData.images.length > 0) {
+            setImagePreviews(carData.images);
+          }
+        } else {
+          setError("Car not found.");
+        }
+      } catch (err) {
+        console.error("Error fetching car data:", err);
+        setError("Failed to fetch car data.");
+      }
+    };
+
+    fetchCarData();
+  }, [isEditMode, carId]);
+
+  useEffect(() => {
     // Use Firebase's auth state observer instead of just checking currentUser once
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -91,7 +128,7 @@ export function UploadCarPage() {
         setIsSubmitting(false);
       }
     });
-    
+
     // Clean up the listener when component unmounts
     return () => unsubscribe();
   }, []); // Empty dependency array as we want this to run once when component mounts
@@ -140,25 +177,17 @@ export function UploadCarPage() {
       pickupLocation: location,
     }));
   };
-  const selectedDates =
-    formData.unavailableDates?.map((date) => new Date(date)) || [];
-  const handleDateSelect = (dates: Date[] | undefined) => {
-    if (!dates) return;
-    setFormData((prev) => ({
-      ...prev,
-      unavailableDates: dates.map((date) => date.toISOString()),
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (imageFiles.length === 0) {
+    if (imageFiles.length === 0 && !isEditMode) {
       setError("Please upload at least one image");
       return;
     }
 
     setIsSubmitting(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
       const user = auth.currentUser;
@@ -172,28 +201,40 @@ export function UploadCarPage() {
       }
       const storage = getStorage();
 
-      // Upload images and get URLs
-      const imageUrls = await Promise.all(
-        imageFiles.map(async (file) => {
-          const storageRef = ref(
-            storage,
-            `partnerWebAppCarImages/${file.name}`
-          );
-          await uploadBytes(storageRef, file);
-          return await getDownloadURL(storageRef);
-        })
-      );
+      let imageUrls = imagePreviews;
 
-      // Save to Firestore
-      const carsRef = collection(db, "partnerWebApp", uid, "uploadedCars");
+      // Upload new images if any
+      if (imageFiles.length > 0) {
+        imageUrls = await Promise.all(
+          imageFiles.map(async (file) => {
+            const storageRef = ref(storage, `partnerWebAppCarImages/${file.name}`);
+            await uploadBytes(storageRef, file);
+            return await getDownloadURL(storageRef);
+          })
+        );
+      }
 
       const carData = {
         ...formData,
         images: imageUrls,
       };
-      await addDoc(carsRef, carData);
 
-      navigate("/home");
+      if (isEditMode && carId) {
+        // Update existing car document
+        const carDocRef = doc(db, "partnerWebApp", uid, "uploadedCars", carId);
+        await updateDoc(carDocRef, carData);
+        setSuccessMessage("Changes saved successfully!"); // Set success message
+      } else {
+        // Add new car document
+        const carsRef = collection(db, "partnerWebApp", uid, "uploadedCars");
+        await addDoc(carsRef, carData);
+        setSuccessMessage("Car uploaded successfully!"); // Set success message
+      }
+
+      // Redirect to home page after 2 seconds
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
     } catch (err) {
       console.error("Error uploading car details:", err);
       setError("Failed to upload car details");
@@ -272,7 +313,7 @@ export function UploadCarPage() {
               <CarIcon className="h-6 w-6 text-darklime/90" />
             </div>
             <h1 className="text-3xl font-bold text-darklime dark:text-lime">
-              Upload Car Details
+            {isEditMode ? "Edit Car Details" : "Upload Car Details"}
             </h1>
           </div>
 
@@ -281,7 +322,11 @@ export function UploadCarPage() {
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
-
+          {successMessage && (
+            <div className="mb-6 bg-green-50 border-l-4 border-green-400 p-4">
+              <p className="text-sm text-green-700">{successMessage}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <Input
@@ -629,23 +674,6 @@ export function UploadCarPage() {
                 </div>
               </div>
 
-              {/* DatePicker for Unavailable dates */}
-              <div className="dark:text-white">
-                <h3 className="text-lg dark:text-white mb-2">
-                  Select Unavailable Dates
-                </h3>
-                <p className="mb-4 dark:text-gray-400 text-gray-800">Mark dates when your car is unavailable for booking</p>
-                <div className="flex justify-center">
-                  <DayPicker
-                    mode="multiple"
-                    selected={selectedDates}
-                    onSelect={handleDateSelect}
-                    className="grid gap-4 p-4 border rounded-lg shadow-md"
-                    
-                  />
-                </div>
-              </div>
-              
               {/* Packages */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -1084,7 +1112,7 @@ export function UploadCarPage() {
                 className="w-full bg-lime text-black dark:text-black hover:bg-lime/70"
                 isLoading={isSubmitting}
               >
-                Upload Car
+                {isEditMode ? "Save Changes" : "Upload Car"}
               </Button>
             </div>
           </form>

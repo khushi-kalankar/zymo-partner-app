@@ -31,7 +31,7 @@ export default {
           },
       },
       boxShadow: {
-        'custom-even': '0 0px 10px rgba(0, 0, 0, 0.1)',
+        'custom-even': '0 0px 7px rgba(0, 0, 0.2, 0.5)',
       },
     },
   },
