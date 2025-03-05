@@ -17,11 +17,6 @@ const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 const CAR_TYPES = ["Sedan", "SUV", "Hatchback", "MPV", "Luxury"];
 const TRANSMISSION_TYPES = ["Manual", "Automatic"];
 
-interface Package {
-  type: "Unlimited" | "Limited";
-  price: number;
-}
-
 export function UploadCarPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,12 +44,13 @@ export function UploadCarPage() {
     transmissionType: TRANSMISSION_TYPES[0],
     minBookingDuration: 1,
     unit: "hours",
-    kmRate: "",
-    extraHourRate: "",
     noOfSeats: 4, // Default value for number of seats
-    hourlyRate: "", // Hourly rate in rupees
+    hourlyRate: "",
+    limit: "Limit Type" as "Limit Type" | "Limited" | "Unlimited", // Limit type
+    extraKmRate: "",
+    extraHourRate: "",
     unavailableDates: [] as string[],
-    packages: [] as Package[],
+    packages: [] as Array<{ hourlyRate: string; kmPerHour: string }>,
     monthlyRental: {
       available: false,
       rate: "",
@@ -91,7 +87,13 @@ export function UploadCarPage() {
           return;
         }
 
-        const carDocRef = doc(db, "partnerWebApp", user.uid, "uploadedCars", carId);
+        const carDocRef = doc(
+          db,
+          "partnerWebApp",
+          user.uid,
+          "uploadedCars",
+          carId
+        );
         const carDoc = await getDoc(carDocRef);
 
         if (carDoc.exists()) {
@@ -159,18 +161,7 @@ export function UploadCarPage() {
     setImagePreviews(newPreviews);
   };
 
-  // const addPackage = () => {
-  //   setFormData({
-  //     ...formData,
-  //     packages: [...formData.packages, { type: 'Limited', price: 0 }],
-  //   });
-  // };
 
-  const removePackage = (index: number) => {
-    const newPackages = [...formData.packages];
-    newPackages.splice(index, 1);
-    setFormData({ ...formData, packages: newPackages });
-  };
   const handlePickupLocationChange = (location: string) => {
     setFormData((prevDetails) => ({
       ...prevDetails,
@@ -207,7 +198,10 @@ export function UploadCarPage() {
       if (imageFiles.length > 0) {
         imageUrls = await Promise.all(
           imageFiles.map(async (file) => {
-            const storageRef = ref(storage, `partnerWebAppCarImages/${file.name}`);
+            const storageRef = ref(
+              storage,
+              `partnerWebAppCarImages/${file.name}`
+            );
             await uploadBytes(storageRef, file);
             return await getDownloadURL(storageRef);
           })
@@ -313,7 +307,7 @@ export function UploadCarPage() {
               <CarIcon className="h-6 w-6 text-darklime/90" />
             </div>
             <h1 className="text-3xl font-bold text-darklime dark:text-lime">
-            {isEditMode ? "Edit Car Details" : "Upload Car Details"}
+              {isEditMode ? "Edit Car Details" : "Upload Car Details"}
             </h1>
           </div>
 
@@ -656,80 +650,195 @@ export function UploadCarPage() {
                       ))}
                     </select>
                   </div>
-
-                  {/* Hourly Rate */}
-                  <Input
-                    label="Hourly Rate ( ₹/hr )"
-                    type="text"
-                    required
-                    prefix="₹"
-                    value={formData.hourlyRate}
-                    onChange={(e: { target: { value: any } }) =>
-                      setFormData({
-                        ...formData,
-                        hourlyRate: e.target.value,
-                      })
-                    }
-                  />
                 </div>
-              </div>
-
-              {/* Packages */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                    Package Details
-                  </label>
-                </div>
-
-                {formData.packages.map((pkg, index) => (
-                  <div key={index} className="flex items-center space-x-4">
-                    <select
-                      value={pkg.type}
-                      onChange={(e) => {
-                        const newPackages = [...formData.packages];
-                        newPackages[index].type = e.target.value as
-                          | "Unlimited"
-                          | "Limited";
-                        setFormData({
-                          ...formData,
-                          packages: newPackages,
-                        });
-                      }}
-                      className="block w-40 rounded-2xl p-2 dark:bg-lightgray dark:text-white dark:border-gray-700 shadow-sm border"
-                    >
-                      <option value="Type">Limit Type</option>
-                      <option value="Limited">Limited</option>
-                      <option value="Unlimited">Unlimited</option>
-                    </select>
-
-                    <Input
-                      label=""
-                      type="text"
-                      prefix="₹"
-                      min="0"
-                      step="0.01"
-                      value={pkg.price}
-                      onChange={(e: { target: { value: any } }) => {
-                        const newPackages = [...formData.packages];
-                        newPackages[index].price = Number(e.target.value);
-                        setFormData({
-                          ...formData,
-                          packages: newPackages,
-                        });
-                      }}
-                      className="flex-1"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => removePackage(index)}
-                      className="p-2 text-red-500 hover:text-red-700"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
+                {/* Fixed Hourly Rate Section */}
+                <div className="space-y-4 mt-10">
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium dark:text-white text-gray-700">
+                      Hourly Rate (₹/hr){" "}
+                      <b className="text-red-500">
+                        (including GST & Zymo Commission)
+                      </b>
+                    </label>
                   </div>
-                ))}
+                  <div className="max-w-md">
+                    <Input
+                      label="Fixed Hourly Rate ( ₹/hr )"
+                      type="text"
+                      required
+                      prefix="₹"
+                      value={formData.hourlyRate}
+                      onChange={(e: { target: { value: any } }) =>
+                        setFormData({
+                          ...formData,
+                          hourlyRate: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                {/* Limit Type Section */}
+                <div className="space-y-4 mt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Limit Type Dropdown */}
+                    <div>
+                      <label className="mx-1 block text-sm font-medium dark:text-white text-gray-700 mb-4">
+                        Limit Type
+                      </label>
+                      <select
+                        value={formData.limit}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            limit: e.target.value as
+                              | "Limit Type"
+                              | "Limited"
+                              | "Unlimited",
+                            packages: [], // Reset packages when limit type changes
+                          })
+                        }
+                        className="mt-1 block p-2 border border-gray-700 dark:bg-lightgray dark:text-white w-full rounded-2xl shadow-sm"
+                      >
+                        <option value="Limit Type">Limit Type</option>
+                        <option value="Limited">Limited</option>
+                        <option value="Unlimited">Unlimited</option>
+                      </select>
+                    </div>
+
+                    {/* Add Package Button (Only for Limited) */}
+                    {formData.limit === "Limited" && (
+                      <div className="flex items-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (formData.packages.length < 5) {
+                              setFormData({
+                                ...formData,
+                                packages: [
+                                  ...formData.packages,
+                                  { hourlyRate: "", kmPerHour: "" },
+                                ],
+                              });
+                            }
+                          }}
+                          className="bg-lime px-4 py-2 rounded-2xl hover:bg-lime/80"
+                        >
+                          Add Package
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Packages Section (Only for Limited) */}
+                  {formData.limit === "Limited" &&
+                    formData.packages.map((pkg, index) => (
+                      <div
+                        key={index}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"
+                      >
+                        <Input
+                          label={`Package ${index + 1} - Hourly Rate (₹/hr)`}
+                          type="text"
+                          min="0"
+                          prefix="₹"
+                          required
+                          value={pkg.hourlyRate}
+                          onChange={(e: { target: { value: any } }) => {
+                            const updatedPackages = [...formData.packages];
+                            updatedPackages[index].hourlyRate = e.target.value;
+                            setFormData({
+                              ...formData,
+                              packages: updatedPackages,
+                            });
+                          }}
+                        />
+                        <Input
+                          label={`Package ${index + 1} - Km per Hour (km/hr)`}
+                          type="text"
+                          min="0"
+                          required
+                          value={pkg.kmPerHour}
+                          onChange={(e: { target: { value: any } }) => {
+                            const updatedPackages = [...formData.packages];
+                            updatedPackages[index].kmPerHour = e.target.value;
+                            setFormData({
+                              ...formData,
+                              packages: updatedPackages,
+                            });
+                          }}
+                        />
+                        <div className="flex items-end">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updatedPackages = formData.packages.filter(
+                                (_, i) => i !== index
+                              );
+                              setFormData({
+                                ...formData,
+                                packages: updatedPackages,
+                              });
+                            }}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            ✕ Remove
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                  {/* Extra Rates Section */}
+                  {formData.limit === "Limited" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <Input
+                        label="Extra Hour Rate (₹/hr)"
+                        type="text"
+                        min="0"
+                        prefix="₹"
+                        required
+                        value={formData.extraHourRate}
+                        onChange={(e: { target: { value: any } }) =>
+                          setFormData({
+                            ...formData,
+                            extraHourRate: e.target.value,
+                          })
+                        }
+                      />
+                      <Input
+                        label="Extra Km Rate (₹/km)"
+                        type="text"
+                        min="0"
+                        prefix="₹"
+                        required
+                        value={formData.extraKmRate}
+                        onChange={(e: { target: { value: any } }) =>
+                          setFormData({
+                            ...formData,
+                            extraKmRate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                  {formData.limit === "Unlimited" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <Input
+                        label="Extra Hour Rate (₹/hr)"
+                        type="text"
+                        min="0"
+                        prefix="₹"
+                        required
+                        value={formData.extraHourRate}
+                        onChange={(e: { target: { value: any } }) =>
+                          setFormData({
+                            ...formData,
+                            extraHourRate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Monthly Rental */}
