@@ -51,20 +51,33 @@ export function UploadCarPage() {
     extraHourRate: "",
     unavailableDates: [] as string[],
     packages: [] as Array<{ hourlyRate: string; kmPerHour: string }>,
-    monthlyRental: {
-      available: false,
-      rate: "",
-      limit: "Limit type" as "Limit Type" | "Unlimited" | "Limited",
-      limitValueKm: "",
-      limitValueHr: "",
-    },
-    weeklyRental: {
-      available: false,
-      rate: "",
-      limit: "Limit Type" as "Limit Type" | "Unlimited" | "Limited",
-      limitValueKm: "",
-      limitValueHr: "",
-    },
+    // In the formData state initialization
+monthlyRental: {
+  available: false,
+  rate: "",
+  limit: "Limit type" as "Limit Type" | "Unlimited" | "Limited",
+  limitValueKm: "",
+  limitValueHr: "",
+  packages: [] as Array<{ 
+    rate: string; 
+    kmLimit: string;
+    extraHourRate: string; // Added
+    extraKmRate: string;   // Added
+  }>,
+},
+weeklyRental: {
+  available: false,
+  rate: "",
+  limit: "Limit Type" as "Limit Type" | "Unlimited" | "Limited",
+  limitValueKm: "",
+  limitValueHr: "",
+  packages: [] as Array<{ 
+    rate: string; 
+    kmLimit: string;
+    extraHourRate: string;
+    extraKmRate: string;
+  }>,
+},
     deliveryCharges: {
       enabled: false,
       Range: "",
@@ -868,7 +881,7 @@ export function UploadCarPage() {
                 </div>
 
                 {formData.monthlyRental.available && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
+                  <div className="grid   gap-4 pl-6">
                     <Input
                       label="Monthly Rate"
                       type="text"
@@ -914,43 +927,135 @@ export function UploadCarPage() {
                     </div>
 
                     {formData.monthlyRental.limit === "Limited" && (
-                      <div>
-                        <Input
-                          label="Extra Km Rate"
-                          type="text"
-                          min="0"
-                          prefix="₹"
-                          required
-                          value={formData.monthlyRental.limitValueKm}
-                          onChange={(e: { target: { value: any } }) =>
-                            setFormData({
-                              ...formData,
-                              monthlyRental: {
-                                ...formData.monthlyRental,
-                                limitValueKm: e.target.value,
-                              },
-                            })
-                          }
-                        />
-                        <Input
-                          label="Extra Hr Rate"
-                          type="text"
-                          min="0"
-                          prefix="₹"
-                          required
-                          value={formData.monthlyRental.limitValueHr}
-                          onChange={(e: { target: { value: any } }) =>
-                            setFormData({
-                              ...formData,
-                              monthlyRental: {
-                                ...formData.monthlyRental,
-                                limitValueHr: e.target.value,
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                    )}
+  <>
+    <div className="flex items-end">
+      <button
+        type="button"
+        onClick={() => {
+          if (formData.monthlyRental.packages.length < 5) {
+            setFormData({
+              ...formData,
+              monthlyRental: {
+                ...formData.monthlyRental,
+                packages: [
+                  ...formData.monthlyRental.packages,
+                  { 
+                    rate: "", 
+                    kmLimit: "", 
+                    extraHourRate: "", // Initialize
+                    extraKmRate: ""    // Initialize
+                  },
+                ],
+              },
+            });
+          }
+        }}
+        className="bg-lime px-4 py-2 rounded-2xl hover:bg-lime/80"
+      >
+        Add Package
+      </button>
+    </div>
+
+    {formData.monthlyRental.packages.map((pkg, index) => (
+      <div
+        key={index}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"
+      >
+        <Input
+          label={`Package ${index + 1} - Monthly Rate`}
+          type="text"
+          prefix="₹"
+          required
+          value={pkg.rate}
+          onChange={(e: { target: { value: string; }; }) => {
+            const updatedPackages = [...formData.monthlyRental.packages];
+            updatedPackages[index].rate = e.target.value;
+            setFormData({
+              ...formData,
+              monthlyRental: {
+                ...formData.monthlyRental,
+                packages: updatedPackages,
+              },
+            });
+          }}
+        />
+        <Input
+          label={`Package ${index + 1} - KM Limit`}
+          type="text"
+          required
+          value={pkg.kmLimit}
+          onChange={(e: { target: { value: any; }; }) => {
+            const updatedPackages = [...formData.monthlyRental.packages];
+            updatedPackages[index].kmLimit = e.target.value;
+            setFormData({
+              ...formData,
+              monthlyRental: {
+                ...formData.monthlyRental,
+                packages: updatedPackages,
+              },
+            });
+          }}
+        />
+        <Input
+      label={`Package ${index + 1} - Extra Hour Rate`}
+      type="text"
+      prefix="₹"
+      required
+      value={pkg.extraHourRate}
+      onChange={(e: { target: { value: string; }; }) => {
+        const updatedPackages = [...formData.monthlyRental.packages];
+        updatedPackages[index].extraHourRate = e.target.value;
+        setFormData({
+          ...formData,
+          monthlyRental: {
+            ...formData.monthlyRental,
+            packages: updatedPackages,
+          },
+        });
+      }}
+    />
+    <Input
+      label={`Package ${index + 1} - Extra KM Rate`}
+      type="text"
+      prefix="₹"
+      required
+      value={pkg.extraKmRate}
+      onChange={(e: { target: { value: string; }; }) => {
+        const updatedPackages = [...formData.monthlyRental.packages];
+        updatedPackages[index].extraKmRate = e.target.value;
+        setFormData({
+          ...formData,
+          monthlyRental: {
+            ...formData.monthlyRental,
+            packages: updatedPackages,
+          },
+        });
+      }}
+    />
+        <div className="flex items-end">
+          <button
+            type="button"
+            onClick={() => {
+              const updatedPackages = formData.monthlyRental.packages.filter(
+                (_, i) => i !== index
+              );
+              setFormData({
+                ...formData,
+                monthlyRental: {
+                  ...formData.monthlyRental,
+                  packages: updatedPackages,
+                },
+              });
+            }}
+            className="text-red-500 hover:text-red-700"
+          >
+            ✕ Remove
+          </button>
+        </div>
+      </div>
+    ))}
+  </>
+)}
                     {formData.monthlyRental.limit === "Unlimited" && (
                       <Input
                         label="Extra Hr rate"
@@ -1000,7 +1105,7 @@ export function UploadCarPage() {
                 </div>
 
                 {formData.weeklyRental.available && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-6">
+                  <div className="grid   gap-4 pl-6">
                     <Input
                       label="Weekly Rental Prices"
                       type="text"
@@ -1046,62 +1151,155 @@ export function UploadCarPage() {
                     </div>
 
                     {formData.weeklyRental.limit === "Limited" && (
-                      <div>
-                        <Input
-                          label="Extra Km rate"
-                          type="text"
-                          min="0"
-                          prefix="₹"
-                          required
-                          value={formData.weeklyRental.limitValueKm}
-                          onChange={(e: { target: { value: any } }) =>
-                            setFormData({
-                              ...formData,
-                              weeklyRental: {
-                                ...formData.weeklyRental,
-                                limitValueKm: e.target.value,
-                              },
-                            })
-                          }
-                        />
-                        <Input
-                          label="Extra Hr rate"
-                          type="text"
-                          min="0"
-                          prefix="₹"
-                          required
-                          value={formData.weeklyRental.limitValueHr}
-                          onChange={(e: { target: { value: any } }) =>
-                            setFormData({
-                              ...formData,
-                              weeklyRental: {
-                                ...formData.weeklyRental,
-                                limitValueHr: e.target.value,
-                              },
-                            })
-                          }
-                        />
-                      </div>
-                    )}
-                    {formData.weeklyRental.limit === "Unlimited" && (
-                      <Input
-                        label="Extra Hr Rate"
-                        type="text"
-                        min="0"
-                        prefix="₹"
-                        required
-                        value={formData.weeklyRental.limitValueHr}
-                        onChange={(e: { target: { value: any } }) =>
-                          setFormData({
-                            ...formData,
-                            weeklyRental: {
-                              ...formData.weeklyRental,
-                              limitValueHr: e.target.value,
-                            },
-                          })
-                        }
-                      />
-                    )}
+  <>
+    <div className="flex items-end">
+      <button
+        type="button"
+        onClick={() => {
+          if (formData.weeklyRental.packages.length < 5) {
+            setFormData({
+              ...formData,
+              weeklyRental: {
+                ...formData.weeklyRental,
+                packages: [
+                  ...formData.weeklyRental.packages,
+                  { 
+                    rate: "", 
+                    kmLimit: "", 
+                    extraHourRate: "", 
+                    extraKmRate: "" 
+                  },
+                ],
+              },
+            });
+          }
+        }}
+        className="bg-lime px-4 py-2 rounded-2xl hover:bg-lime/80"
+      >
+        Add Package
+      </button>
+    </div>
+
+    {formData.weeklyRental.packages.map((pkg, index) => (
+      <div
+        key={index}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"
+      >
+        <Input
+          label={`Package ${index + 1} - Weekly Rate`}
+          type="text"
+          prefix="₹"
+          required
+          value={pkg.rate}
+          onChange={(e: { target: { value: string; }; }) => {
+            const updatedPackages = [...formData.weeklyRental.packages];
+            updatedPackages[index].rate = e.target.value;
+            setFormData({
+              ...formData,
+              weeklyRental: {
+                ...formData.weeklyRental,
+                packages: updatedPackages,
+              },
+            });
+          }}
+        />
+        <Input
+          label={`Package ${index + 1} - KM Limit`}
+          type="text"
+          required
+          value={pkg.kmLimit}
+          onChange={(e: { target: { value: any; }; }) => {
+            const updatedPackages = [...formData.weeklyRental.packages];
+            updatedPackages[index].kmLimit = e.target.value;
+            setFormData({
+              ...formData,
+              weeklyRental: {
+                ...formData.weeklyRental,
+                packages: updatedPackages,
+              },
+            });
+          }}
+        />
+// Fix weekly package input handlers
+<Input
+  label={`Package ${index + 1} - Extra Hour Rate`}
+  type="text"
+  prefix="₹"
+  required
+  value={pkg.extraHourRate}
+  onChange={(e: { target: { value: string } }) => {
+    const updatedPackages = [...formData.weeklyRental.packages]; // Changed to weeklyRental
+    updatedPackages[index].extraHourRate = e.target.value;
+    setFormData({
+      ...formData,
+      weeklyRental: {
+        ...formData.weeklyRental,
+        packages: updatedPackages,
+      },
+    });
+  }}
+/>
+<Input
+  label={`Package ${index + 1} - Extra KM Rate`}
+  type="text"
+  prefix="₹"
+  required
+  value={pkg.extraKmRate}
+  onChange={(e: { target: { value: string } }) => {
+    const updatedPackages = [...formData.weeklyRental.packages]; // Changed to weeklyRental
+    updatedPackages[index].extraKmRate = e.target.value;
+    setFormData({
+      ...formData,
+      weeklyRental: {
+        ...formData.weeklyRental,
+        packages: updatedPackages,
+      },
+    });
+  }}
+/>
+        <div className="flex items-end">
+          <button
+            type="button"
+            onClick={() => {
+              const updatedPackages = formData.weeklyRental.packages.filter(
+                (_, i) => i !== index
+              );
+              setFormData({
+                ...formData,
+                weeklyRental: {
+                  ...formData.weeklyRental,
+                  packages: updatedPackages,
+                },
+              });
+            }}
+            className="text-red-500 hover:text-red-700"
+          >
+            ✕ Remove
+          </button>
+        </div>
+      </div>
+    ))}
+  </>
+)}
+{formData.weeklyRental.limit === "Unlimited" && (
+  <Input
+    label="Extra Hr Rate"
+    type="text"
+    min="0"
+    prefix="₹"
+    required
+    value={formData.weeklyRental.limitValueHr}
+    onChange={(e: { target: { value: string } }) => {
+      setFormData({
+        ...formData,
+        weeklyRental: {
+          ...formData.weeklyRental,
+          limitValueHr: e.target.value,
+        },
+      });
+    }}
+  />
+)}
                   </div>
                 )}
               </div>
